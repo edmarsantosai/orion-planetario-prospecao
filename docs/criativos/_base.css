@@ -1,0 +1,47 @@
+/* Base compartilhada dos criativos retrato 1080x1350 (Direct/WhatsApp) */
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#F5C14E; --gold-2:#E7A82E; --ink:#F7F6FF; --muted:#AEB4DE;
+  --green:#4ED8A0; --red:#FF8A8A; --line:rgba(255,255,255,.16); --violet:#8B6CE0;
+  --disp:'Sora',system-ui,sans-serif; --sans:'Inter',system-ui,sans-serif;
+}
+html,body{width:1080px;height:1350px;overflow:hidden;color:var(--ink);font-family:var(--sans);
+  -webkit-print-color-adjust:exact;print-color-adjust:exact}
+.stage{position:relative;width:1080px;height:1350px;display:flex;flex-direction:column;
+  background:radial-gradient(900px 620px at 85% -10%,rgba(139,108,224,.5),transparent 56%),
+             radial-gradient(700px 520px at -10% 112%,rgba(245,193,78,.16),transparent 55%),
+             linear-gradient(160deg,#05081A,#0B1030)}
+.stars{position:absolute;inset:0;z-index:1;opacity:.5;pointer-events:none;background-image:
+  radial-gradient(2px 2px at 18% 20%,#fff,transparent),radial-gradient(1.6px 1.6px at 68% 14%,#fff,transparent),
+  radial-gradient(2px 2px at 42% 62%,#fff,transparent),radial-gradient(1.4px 1.4px at 82% 52%,#fff,transparent),
+  radial-gradient(1.8px 1.8px at 54% 38%,#fff,transparent),radial-gradient(1.4px 1.4px at 12% 80%,#fff,transparent),
+  radial-gradient(1.6px 1.6px at 90% 80%,#fff,transparent),radial-gradient(1.4px 1.4px at 30% 92%,#fff,transparent)}
+.pad{position:relative;z-index:2;padding:60px 58px;display:flex;flex-direction:column;flex:1}
+.top{display:flex;align-items:center;justify-content:space-between}
+.logo{display:flex;align-items:center;gap:14px;font-family:var(--disp);font-weight:800;font-size:27px;letter-spacing:.02em}
+.logo .dot{width:40px;height:40px;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--gold),#a9741b);box-shadow:0 0 28px rgba(245,193,78,.6)}
+.pill{display:inline-flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:700;font-size:18px;color:#1b1403;
+  background:linear-gradient(180deg,var(--gold),var(--gold-2));padding:12px 22px;border-radius:999px;box-shadow:0 0 30px rgba(245,193,78,.45)}
+.kicker{font-family:var(--disp);letter-spacing:.3em;text-transform:uppercase;font-size:18px;color:var(--gold);font-weight:600}
+h1{font-family:var(--disp);font-weight:800;font-size:70px;line-height:1.02;letter-spacing:-1.5px}
+h2{font-family:var(--disp);font-weight:800;font-size:44px;line-height:1.08}
+.gold{color:var(--gold)} .wht{color:#EEF0FF}
+p{color:var(--muted);font-size:25px;line-height:1.5}
+.card{background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:34px;padding:32px;
+  box-shadow:0 18px 50px rgba(2,4,12,.5), inset 0 1px 0 rgba(255,255,255,.08)}
+.ph{position:relative;border-radius:34px;overflow:hidden;border:1px solid var(--line);box-shadow:0 18px 50px rgba(2,4,12,.5)}
+.ph img{width:100%;height:100%;object-fit:cover;display:block;filter:contrast(1.08) saturate(1.06) brightness(.96)}
+.ph .scrim{position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,8,26,0) 30%,rgba(5,8,26,.85))}
+.ph .tint{position:absolute;inset:0;background:radial-gradient(120% 80% at 15% 0%,rgba(139,108,224,.35),transparent 60%);mix-blend-mode:screen}
+.statnum{font-family:var(--disp);font-weight:800;font-size:66px;color:var(--gold);line-height:1}
+.statlbl{font-size:19px;color:var(--muted);margin-top:6px}
+.chk{display:flex;gap:16px;align-items:center;padding:11px 0;font-size:26px;color:#E3E6FA}
+.chk b{color:#fff;font-weight:700}
+.ic{flex:0 0 52px;height:52px;border-radius:15px;background:rgba(139,108,224,.2);border:1px solid rgba(139,108,224,.4);
+  display:grid;place-items:center}
+.ic svg{width:28px;height:28px;stroke:var(--gold);fill:none;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.cta{display:flex;align-items:center;justify-content:center;gap:16px;background:linear-gradient(180deg,var(--gold),var(--gold-2));color:#1b1403;
+  border-radius:24px;padding:26px 30px;font-family:var(--disp);font-weight:800;font-size:33px;box-shadow:0 16px 40px rgba(245,193,78,.4)}
+.cta svg{width:34px;height:34px;stroke:#1b1403;fill:none;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}
+.foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:22px;font-size:20px;color:var(--muted)}
+.foot b{color:#EEF0FF}
