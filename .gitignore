@@ -1,0 +1,29 @@
+# === Orion Prospecção — .gitignore ===
+
+# Kit de mídia espelhado do Google Drive (pesado; referência local, não versionar)
+drive-download-*/
+
+# Segredos / ambiente (bot n8n, SMTP, Evolution API, tokens Notion)
+.env
+*.env
+!*.env.example
+bot/.env
+secrets/
+
+# Dados pessoais (LGPD): nomes de direção/coordenação vivem SÓ no Notion.
+# Qualquer export com dado pessoal vai aqui e NÃO sobe ao Git.
+data/private/
+data/*_pessoal.csv
+data/export_notion_*.csv
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Node / runtime
+node_modules/
+dist/
+*.log

@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Orion Planetários — Apresentação para Escolas</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cosmos:#070B1E; --cosmos-2:#0E1330; --panel:#151B3D; --panel-2:#1C2350;
+    --violet:#7C5CBF; --violet-2:#4C3A77; --gold:#F4C95D; --gold-2:#E9B44C;
+    --ink:#F6F5FF; --muted:#AEB4D6; --line:rgba(255,255,255,.12);
+    --sans:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
+    --disp:'Space Grotesk',var(--sans);
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#05070f;color:var(--ink);font-family:var(--sans);-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  .page{
+    position:relative;width:210mm;min-height:297mm;margin:0 auto;overflow:hidden;
+    background:radial-gradient(1200px 700px at 80% -10%,rgba(124,92,191,.35),transparent 60%),
+               radial-gradient(900px 600px at -10% 110%,rgba(244,201,93,.12),transparent 55%),
+               linear-gradient(160deg,var(--cosmos),var(--cosmos-2));
+    padding:22mm 18mm;display:flex;flex-direction:column;
+  }
+  .page + .page{margin-top:10mm}
+  .stars{position:absolute;inset:0;background-image:
+      radial-gradient(1.4px 1.4px at 20% 30%,#fff,transparent),
+      radial-gradient(1.2px 1.2px at 70% 20%,#fff,transparent),
+      radial-gradient(1.6px 1.6px at 40% 70%,#fff,transparent),
+      radial-gradient(1px 1px at 85% 60%,#fff,transparent),
+      radial-gradient(1.3px 1.3px at 55% 45%,#fff,transparent),
+      radial-gradient(1px 1px at 15% 85%,#fff,transparent);
+    opacity:.5;pointer-events:none}
+  .wrap{position:relative;z-index:1;display:flex;flex-direction:column;flex:1}
+  .kicker{font-family:var(--disp);letter-spacing:.28em;text-transform:uppercase;font-size:11px;color:var(--gold);font-weight:600}
+  h1{font-family:var(--disp);font-weight:700;font-size:46px;line-height:1.05;letter-spacing:-.5px;margin:14px 0}
+  h2{font-family:var(--disp);font-weight:700;font-size:32px;line-height:1.1;letter-spacing:-.3px}
+  h3{font-family:var(--disp);font-weight:600;font-size:18px}
+  p{color:var(--muted);font-size:15px;line-height:1.6}
+  .lead{font-size:19px;color:#E7E9FB;line-height:1.5}
+  .brandbar{display:flex;align-items:center;justify-content:space-between;gap:16px}
+  .logo{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:700;font-size:18px;letter-spacing:.02em}
+  .logo .dot{width:30px;height:30px;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--gold),#b6801f);box-shadow:0 0 22px rgba(244,201,93,.6)}
+  .chip{font-size:11px;color:var(--muted);border:1px solid var(--line);border-radius:999px;padding:6px 12px}
+  .hero-img{width:100%;height:92mm;object-fit:cover;border-radius:16px;border:1px solid var(--line);box-shadow:0 20px 60px rgba(0,0,0,.45);margin-top:auto}
+  .btn{display:inline-flex;align-items:center;gap:10px;background:linear-gradient(180deg,var(--gold),var(--gold-2));color:#231a04;
+       font-family:var(--disp);font-weight:700;font-size:16px;padding:14px 22px;border-radius:12px;text-decoration:none;
+       box-shadow:0 10px 30px rgba(244,201,93,.35)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--line);border-radius:16px;padding:20px}
+  .card h3{margin-bottom:6px}
+  .num{font-family:var(--disp);font-size:40px;font-weight:700;color:var(--gold);line-height:1}
+  .step{display:flex;gap:16px;align-items:flex-start;padding:14px 0;border-bottom:1px solid var(--line)}
+  .step:last-child{border-bottom:0}
+  .step .idx{flex:0 0 42px;height:42px;border-radius:50%;display:grid;place-items:center;font-family:var(--disp);font-weight:700;
+             color:var(--gold);border:1px solid rgba(244,201,93,.5);background:rgba(244,201,93,.08)}
+  .check{display:flex;gap:12px;align-items:flex-start;padding:10px 0}
+  .check .ic{flex:0 0 24px;height:24px;border-radius:50%;background:rgba(124,92,191,.25);color:var(--gold);display:grid;place-items:center;font-weight:700;font-size:13px}
+  .pricetag{display:flex;align-items:baseline;gap:12px;margin-top:8px}
+  .pricetag .big{font-family:var(--disp);font-size:56px;font-weight:700;color:var(--gold)}
+  .foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:12px;font-size:12px;color:var(--muted)}
+  .contact{background:linear-gradient(180deg,rgba(124,92,191,.22),rgba(124,92,191,.05));border:1px solid rgba(124,92,191,.4);border-radius:18px;padding:22px}
+  .contact a{color:var(--ink);text-decoration:none;font-weight:600}
+  .imgband{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:14px}
+  .imgband img{width:100%;height:46mm;object-fit:cover;border-radius:12px;border:1px solid var(--line)}
+  .quote{font-family:var(--disp);font-size:22px;color:#EDEEFB;line-height:1.35}
+  .print-bar{position:fixed;top:14px;right:14px;z-index:99}
+  .print-bar button{background:var(--gold);color:#231a04;border:0;border-radius:10px;padding:10px 16px;font-weight:700;font-family:var(--disp);cursor:pointer;box-shadow:0 8px 24px rgba(0,0,0,.3)}
+  @media print{
+    .print-bar{display:none}
+    .page{margin:0!important;box-shadow:none;page-break-after:always}
+    @page{size:A4;margin:0}
+  }
+</style>
+</head>
+<body>
+<div class="print-bar"><button onclick="window.print()">🖨️ Salvar como PDF</button></div>
+
+<!-- 1. CAPA -->
+<section class="page">
+  <span class="stars"></span>
+  <div class="wrap">
+    <div class="brandbar">
+      <div class="logo"><span class="dot"></span> ORION PLANETÁRIOS</div>
+      <span class="chip">Representante Oficial · SC &amp; SP</span>
+    </div>
+    <div style="margin-top:38px">
+      <span class="kicker">Planetário Itinerante nas Escolas</span>
+      <h1>E se a próxima aula de astronomia<br>acontecesse <span style="color:var(--gold)">dentro de um planetário</span>?</h1>
+      <p class="lead">Levamos o universo em 360° até o pátio da sua escola — uma experiência imersiva que os alunos nunca esquecem. <strong style="color:#EDEEFB">E sem custo para a instituição.</strong></p>
+    </div>
+    <img class="hero-img" src="https://orionplanetarios.com.br/wp-content/uploads/2022/08/orionplanetarios-006-768x576.jpg" alt="Planetário inflável montado na escola">
+    <div class="foot">
+      <span>+200.000 alunos já viveram essa experiência · redes pública e particular</span>
+      <span>@orionplanetarios · orionplanetarios.com.br</span>
+    </div>
+  </div>
+</section>
+
+<!-- 2. A EXPERIÊNCIA -->
+<section class="page">
+  <span class="stars"></span>
+  <div class="wrap">
+    <span class="kicker">A Experiência</span>
+    <h2>Uma viagem pelo universo, sem sair da escola</h2>
+    <p class="lead" style="margin-top:10px">Um domo inflável vira um céu em 360°. Com projeção imersiva e imagens reais do espaço, os alunos exploram o Sistema Solar, as estrelas e os fenômenos do cosmos — guiados por um apresentador.</p>
+    <div class="imgband">
+      <img src="https://orionplanetarios.com.br/wp-content/uploads/2022/08/orionplanetarios-002-768x576.jpg" alt="Interior do domo">
+      <img src="https://orionplanetarios.com.br/wp-content/uploads/2022/08/orionplanetarios-008-768x576.jpg" alt="Alunos na sessão">
+      <img src="https://orionplanetarios.com.br/wp-content/uploads/2022/08/orionplanetarios-0013-768x576.jpg" alt="Projeção 360">
+    </div>
+    <div class="grid3" style="margin-top:18px">
+      <div class="card"><div class="num">360°</div><h3>Projeção imersiva</h3><p>Céu completo sobre a cabeça dos alunos.</p></div>
+      <div class="card"><div class="num">30min</div><h3>Por sessão</h3><p>Turmas se revezam ao longo do dia.</p></div>
+      <div class="card"><div class="num">BNCC</div><h3>Por faixa etária</h3><p>Conteúdo alinhado ao que a turma estuda.</p></div>
+    </div>
+    <div class="foot"><span>Orion Planetários</span><span>Como funciona · pág. 2</span></div>
+  </div>
+</section>
+
+<!-- 3. COMO FUNCIONA -->
+<section class="page">
+  <span class="stars"></span>
+  <div class="wrap">
+    <span class="kicker">Como Funciona</span>
+    <h2>Simples para a escola, inesquecível para o aluno</h2>
+    <div style="margin-top:14px">
+      <div class="step"><div class="idx">1</div><div><h3>A gente vai até você</h3><p>Levamos e montamos o planetário na quadra ou pátio coberto. A escola não se preocupa com transporte nem logística.</p></div></div>
+      <div class="step"><div class="idx">2</div><div><h3>Sessões por turma</h3><p>Sessões de ~30 min, com conteúdo adequado a cada faixa etária, do Infantil ao Médio.</p></div></div>
+      <div class="step"><div class="idx">3</div><div><h3>Nós cuidamos da divulgação</h3><p>A Orion faz toda a comunicação com pais e alunos. A escola só organiza a escala das turmas.</p></div></div>
+      <div class="step"><div class="idx">4</div><div><h3>Um dia que vira história</h3><p>Os alunos saem encantados — e ainda concorrem a um telescópio ao final.</p></div></div>
+    </div>
+    <div class="foot"><span>Orion Planetários</span><span>@orionplanetarios</span></div>
+  </div>
+</section>
+
+<!-- 4. POR QUE A ESCOLA AMA (VALUE STACK) -->
+<section class="page">
+  <span class="stars"></span>
+  <div class="wrap">
+    <span class="kicker">Por que as escolas dizem sim</span>
+    <h2>Tudo que a sua escola ganha</h2>
+    <div class="grid2" style="margin-top:14px">
+      <div class="card">
+        <div class="check"><span class="ic">✓</span><div><strong style="color:#EDEEFB">Experiência imersiva e memorável</strong><p>Astronomia que conecta com a sala de aula.</p></div></div>
+        <div class="check"><span class="ic">✓</span><div><strong style="color:#EDEEFB">Zero logística</strong><p>Montagem, operação e desmontagem por nossa conta.</p></div></div>
+        <div class="check"><span class="ic">✓</span><div><strong style="color:#EDEEFB">Divulgação feita pela Orion</strong><p>Material pronto para pais e alunos.</p></div></div>
+        <div class="check"><span class="ic">✓</span><div><strong style="color:#EDEEFB">A escola se destaca na cidade</strong><p>Evento inovador que fortalece a imagem e ajuda nas matrículas.</p></div></div>
+        <div class="check"><span class="ic">✓</span><div><strong style="color:#EDEEFB">Telescópio sorteado</strong><p>Um aluno participante leva um telescópio para casa.</p></div></div>
+      </div>
+      <div class="card" style="display:flex;flex-direction:column;justify-content:center;background:linear-gradient(180deg,rgba(244,201,93,.14),rgba(244,201,93,.03));border-color:rgba(244,201,93,.4)">
+        <span class="kicker">O modelo</span>
+        <p class="lead" style="margin:8px 0">A escola não paga nada. Os alunos compram o ingresso, a Orion cuida de tudo —</p>
+        <div class="pricetag"><span>Custo para a escola:</span><span class="big">R$ 0</span></div>
+        <p style="margin-top:10px">E ainda: <strong style="color:var(--gold)">a escola recebe 10%</strong> do valor arrecadado.</p>
+      </div>
+    </div>
+    <div class="foot"><span>Modelo sujeito a alinhamento com a direção</span><span>Orion Planetários</span></div>
+  </div>
+</section>
+
+<!-- 5. PROVA SOCIAL -->
+<section class="page">
+  <span class="stars"></span>
+  <div class="wrap">
+    <span class="kicker">Prova Social</span>
+    <h2>Já somos parte da história de milhares de alunos</h2>
+    <div class="grid3" style="margin-top:16px">
+      <div class="card"><div class="num">+200mil</div><h3>Alunos impactados</h3><p>Em redes pública e particular do Brasil.</p></div>
+      <div class="card"><div class="num">360°</div><h3>De encantamento</h3><p>Reações reais registradas em cada escola.</p></div>
+      <div class="card"><div class="num">100%</div><h3>Montado na escola</h3><p>A experiência vai até os alunos.</p></div>
+    </div>
+    <div class="card" style="margin-top:16px">
+      <p class="quote">“Uma experiência surreal para as crianças — e sem o desgaste de organizar um passeio externo.”</p>
+      <p style="margin-top:8px">— feedback de coordenações parceiras</p>
+    </div>
+    <div class="imgband">
+      <img src="https://orionplanetarios.com.br/wp-content/uploads/2022/08/orionplanetarios-007-768x576.jpg" alt="Sessão com alunos">
+      <img src="https://orionplanetarios.com.br/wp-content/uploads/2022/08/orionplanetarios-009-768x575.jpg" alt="Domo iluminado">
+      <img src="https://orionplanetarios.com.br/wp-content/uploads/2022/08/orionplanetarios-0015-768x576.jpg" alt="Experiência imersiva">
+    </div>
+    <div class="foot"><span>Veja mais em @orionplanetarios</span><span>orionplanetarios.com.br</span></div>
+  </div>
+</section>
+
+<!-- 6. ESTRUTURA -->
+<section class="page">
+  <span class="stars"></span>
+  <div class="wrap">
+    <span class="kicker">Estrutura Mínima</span>
+    <h2>O que a escola precisa ter</h2>
+    <p class="lead" style="margin-top:10px">Só isto — nós levamos o resto.</p>
+    <div class="grid3" style="margin-top:18px">
+      <div class="card"><div class="num">7×8m</div><h3>Espaço coberto</h3><p>Quadra, ginásio ou refeitório.</p></div>
+      <div class="card"><div class="num">3,5m</div><h3>Pé-direito</h3><p>Altura livre para o domo.</p></div>
+      <div class="card"><div class="num">220V</div><h3>Tomada</h3><p>Ponto de energia próximo.</p></div>
+    </div>
+    <div class="card" style="margin-top:18px">
+      <h3>E o dia do evento?</h3>
+      <p style="margin-top:6px">A equipe chega, monta, conduz as sessões turma a turma e desmonta. A escola organiza apenas a escala das turmas. Simples assim.</p>
+    </div>
+    <div class="foot"><span>Medidas conforme padrão Orion</span><span>Orion Planetários</span></div>
+  </div>
+</section>
+
+<!-- 7. CTA -->
+<section class="page">
+  <span class="stars"></span>
+  <div class="wrap">
+    <span class="kicker">Vamos agendar?</span>
+    <h1 style="font-size:40px">A agenda é itinerante —<br>cada cidade tem <span style="color:var(--gold)">poucas datas por semestre</span>.</h1>
+    <p class="lead">Faz sentido garantir uma data para a sua escola antes de a agenda da sua região fechar? É rápido: uma conversa de 15 minutos e eu alinho tudo com você.</p>
+    <div class="contact" style="margin-top:22px">
+      <span class="kicker">Fale comigo</span>
+      <div style="display:flex;align-items:center;gap:16px;margin:10px 0 12px">
+        <img src="assets/edmar.webp" alt="Edmar Santos — Representante Orion" style="width:84px;height:84px;border-radius:50%;object-fit:cover;border:2px solid var(--gold);box-shadow:0 0 22px rgba(244,201,93,.4)" onerror="this.style.display='none'">
+        <div>
+          <h2 style="font-size:26px">Edmar Santos</h2>
+          <p style="color:#EDEEFB">Representante Oficial — Orion Planetários (SC &amp; SP)</p>
+        </div>
+      </div>
+      <div class="grid2">
+        <div class="check"><span class="ic">●</span><div><strong style="color:#EDEEFB">WhatsApp</strong><p><a href="https://wa.me/5547992009480">(47) 99200-9480</a></p></div></div>
+        <div class="check"><span class="ic">●</span><div><strong style="color:#EDEEFB">E-mail</strong><p><a href="mailto:edmar.orionplanetarios@gmail.com">edmar.orionplanetarios@gmail.com</a></p></div></div>
+        <div class="check"><span class="ic">●</span><div><strong style="color:#EDEEFB">Instagram</strong><p><a href="https://instagram.com/orionplanetarios">@orionplanetarios</a></p></div></div>
+        <div class="check"><span class="ic">●</span><div><strong style="color:#EDEEFB">Site</strong><p><a href="https://orionplanetarios.com.br">orionplanetarios.com.br</a></p></div></div>
+      </div>
+      <div style="margin-top:18px"><a class="btn" href="https://wa.me/5547992009480?text=Oi%20Edmar!%20Quero%20saber%20sobre%20o%20Planet%C3%A1rio%20Itinerante%20na%20escola.">Quero reservar uma data →</a></div>
+    </div>
+    <div class="foot"><span>Orion Planetários · Planetário Itinerante</span><span>@orionplanetarios</span></div>
+  </div>
+</section>
+
+</body>
+</html>
