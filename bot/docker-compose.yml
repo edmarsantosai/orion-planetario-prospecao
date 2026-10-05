@@ -1,0 +1,67 @@
+# Orion Outreach Bot — stack self-hosted (n8n + Postgres + Evolution API)
+# Uso na VPS:  cp env.example .env  && edite  &&  docker compose up -d
+# Depois: n8n (http://SEU_IP:5678) -> Import -> n8n_orion_flow.json
+services:
+  postgres:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${PGDATABASE}
+      POSTGRES_USER: ${PGUSER}
+      POSTGRES_PASSWORD: ${PGPASSWORD}
+    volumes:
+      - pg_data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    ports:
+      - "5432:5432"
+
+  n8n:
+    image: n8nio/n8n:latest
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      GENERIC_TIMEZONE: ${GENERIC_TIMEZONE}
+      TZ: ${GENERIC_TIMEZONE}
+      N8N_HOST: ${N8N_HOST}
+      N8N_PORT: ${N8N_PORT}
+      N8N_PROTOCOL: ${N8N_PROTOCOL}
+      N8N_ENCRYPTION_KEY: ${N8N_ENCRYPTION_KEY}
+      DB_TYPE: postgresdb
+      DB_POSTGRESDB_HOST: postgres
+      DB_POSTGRESDB_PORT: 5432
+      DB_POSTGRESDB_DATABASE: ${PGDATABASE}
+      DB_POSTGRESDB_USER: ${PGUSER}
+      DB_POSTGRESDB_PASSWORD: ${PGPASSWORD}
+      # variáveis lidas pelos nós do fluxo (expressões $env.*)
+      ANEXO_APRESENTACAO: ${ANEXO_APRESENTACAO}
+      EMAIL_MODO: ${EMAIL_MODO}
+      SMTP_USER: ${SMTP_USER}
+      EMAIL_REPLY_TO: ${EMAIL_REPLY_TO}
+      EVOLUTION_URL: ${EVOLUTION_URL}
+      EVOLUTION_INSTANCE: ${EVOLUTION_INSTANCE}
+      EVOLUTION_APIKEY: ${EVOLUTION_APIKEY}
+      WHATSAPP_MAX_TOQUES: ${WHATSAPP_MAX_TOQUES}
+      OPTOUT_PALAVRAS: ${OPTOUT_PALAVRAS}
+      OPTOUT_BLOQUEIO_DIAS: ${OPTOUT_BLOQUEIO_DIAS}
+    ports:
+      - "5678:5678"
+    volumes:
+      - n8n_data:/home/node/.n8n
+      # monta os docs do repo para o anexo da apresentação existir dentro do container
+      - ../docs:/data/docs:ro
+
+  evolution:
+    image: atendai/evolution-api:latest
+    restart: unless-stopped
+    environment:
+      AUTHENTICATION_API_KEY: ${EVOLUTION_APIKEY}
+    volumes:
+      - evolution_data:/evolution/instances
+    ports:
+      - "8080:8080"
+
+volumes:
+  pg_data:
+  n8n_data:
+  evolution_data:
