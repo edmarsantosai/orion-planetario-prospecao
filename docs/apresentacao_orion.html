@@ -9,105 +9,142 @@
 <link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
   :root{
-    --cosmos:#05081A; --cosmos-2:#0B1030; --panel:rgba(255,255,255,.055); --panel-2:rgba(255,255,255,.085);
-    --violet:#8B6CE0; --violet-2:#4C3A86; --gold:#F5C14E; --gold-2:#E7A82E;
-    --ink:#F7F6FF; --muted:#A9B0DA; --line:rgba(255,255,255,.14); --line-2:rgba(255,255,255,.22);
-    --green:#4ED8A0; --red:#FF8A8A;
-    --r:26px; --r-lg:30px; --r-md:20px; --r-sm:14px; --pill:999px;
-    --sh:0 18px 50px rgba(2,4,12,.5); --glow:0 0 28px rgba(245,193,78,.45);
+    --cosmos:#05081A; --ink:#F7F6FF; --muted:#C3C8EC; --soft:#9AA2D4;
+    --violet:#A98CF2; --gold:#F5C14E; --gold-2:#E7A82E; --cyan:#29ABE2;
+    --green:#5FE3AE; --red:#FF9D9D; --line:rgba(255,255,255,.2);
     --sans:'Inter',system-ui,-apple-system,Segoe UI,Roboto,sans-serif;
     --disp:'Sora',var(--sans);
+    --glow:0 0 32px rgba(245,193,78,.5);
   }
   *{box-sizing:border-box;margin:0;padding:0}
   html,body{background:#02030a;color:var(--ink);font-family:var(--sans);-webkit-print-color-adjust:exact;print-color-adjust:exact}
   a{color:inherit;text-decoration:none}
-  .page{position:relative;width:210mm;min-height:297mm;margin:0 auto;overflow:hidden;display:flex;flex-direction:column;
-    background:radial-gradient(1000px 620px at 88% -14%,rgba(139,108,224,.42),transparent 56%),
-               radial-gradient(760px 520px at -14% 114%,rgba(245,193,78,.14),transparent 55%),
-               radial-gradient(900px 700px at 50% 120%,rgba(76,58,134,.3),transparent 60%),
-               linear-gradient(160deg,var(--cosmos),var(--cosmos-2))}
-  .page+.page{margin-top:8mm}
-  .pad{padding:15mm 14mm;position:relative;z-index:2;display:flex;flex-direction:column;flex:1}
-  .stars{position:absolute;inset:0;z-index:1;pointer-events:none;opacity:.5;background-image:
-    radial-gradient(1.5px 1.5px at 18% 24%,#fff,transparent),radial-gradient(1.2px 1.2px at 68% 16%,#fff,transparent),
-    radial-gradient(1.6px 1.6px at 42% 66%,#fff,transparent),radial-gradient(1px 1px at 82% 56%,#fff,transparent),
-    radial-gradient(1.3px 1.3px at 54% 40%,#fff,transparent),radial-gradient(1px 1px at 12% 82%,#fff,transparent),
-    radial-gradient(1.1px 1.1px at 90% 82%,#fff,transparent),radial-gradient(1px 1px at 33% 92%,#fff,transparent)}
-  .kicker{font-family:var(--disp);letter-spacing:.3em;text-transform:uppercase;font-size:10.5px;color:var(--gold);font-weight:600}
-  h1{font-family:var(--disp);font-weight:800;font-size:50px;line-height:1.03;letter-spacing:-1px}
-  h2{font-family:var(--disp);font-weight:800;font-size:32px;line-height:1.08;letter-spacing:-.4px}
-  h3{font-family:var(--disp);font-weight:700;font-size:15.5px;letter-spacing:-.1px}
-  p{color:var(--muted);font-size:14px;line-height:1.6}
-  .lead{font-size:17.5px;color:#E9EAFC;line-height:1.5}
-  .gold{color:var(--gold)} .wht{color:#EEF0FF}
-  /* glass card */
-  .card{background:var(--panel);border:1px solid var(--line);border-radius:var(--r);padding:18px;
-    box-shadow:var(--sh), inset 0 1px 0 rgba(255,255,255,.08)}
-  .card.soft{background:var(--panel-2)}
-  .pill{display:inline-flex;align-items:center;gap:7px;font-family:var(--disp);font-weight:600;font-size:11px;letter-spacing:.03em;
-    color:#1b1403;background:linear-gradient(180deg,var(--gold),var(--gold-2));padding:7px 14px;border-radius:var(--pill);box-shadow:var(--glow)}
-  .pill.ghost{background:rgba(255,255,255,.06);color:var(--gold);border:1px solid rgba(245,193,78,.5);box-shadow:none}
+
+  .slide{position:relative;width:210mm;height:297mm;margin:0 auto;overflow:hidden;display:flex;flex-direction:column}
+  .slide+.slide{margin-top:8mm}
+  .bg{position:absolute;inset:0;z-index:0;background-size:cover;background-position:center;
+      filter:contrast(1.06) saturate(1.1)}
+  .scrim{position:absolute;inset:0;z-index:1}
+  /* directional overlays for legibility */
+  .s-hero{background:linear-gradient(180deg,rgba(3,5,16,.78) 0%,rgba(3,5,16,.25) 26%,rgba(3,5,16,.45) 58%,rgba(3,5,16,.96) 100%)}
+  .s-bottom{background:linear-gradient(180deg,rgba(3,5,16,.80) 0%,rgba(3,5,16,.30) 20%,rgba(3,5,16,.55) 60%,rgba(3,5,16,.97) 100%)}
+  .s-veil{background:linear-gradient(180deg,rgba(3,5,16,.86) 0%,rgba(3,5,16,.62) 40%,rgba(3,5,16,.78) 100%)}
+  .s-left{background:linear-gradient(90deg,rgba(3,5,16,.92) 0%,rgba(3,5,16,.6) 48%,rgba(3,5,16,.2) 100%),
+                     linear-gradient(180deg,rgba(3,5,16,.55),rgba(3,5,16,.75))}
+  .vign{box-shadow:inset 0 0 180px 40px rgba(2,3,10,.7)}
+
+  .wrap{position:relative;z-index:3;display:flex;flex-direction:column;flex:1;padding:16mm 15mm}
+  .top{display:flex;align-items:center;justify-content:space-between}
+  .brand{height:36px;width:auto;display:block;filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
+  .brand-sm{height:22px;width:auto;display:block;opacity:.95;filter:drop-shadow(0 2px 8px rgba(0,0,0,.6))}
+  .tag{font-family:var(--disp);font-weight:600;font-size:11px;letter-spacing:.04em;color:#1b1403;
+       background:linear-gradient(180deg,var(--gold),var(--gold-2));padding:8px 15px;border-radius:999px;box-shadow:var(--glow)}
+  .tag.ghost{background:rgba(255,255,255,.08);color:var(--gold);border:1px solid rgba(245,193,78,.55);box-shadow:none;backdrop-filter:blur(2px)}
+
+  .kicker{font-family:var(--disp);letter-spacing:.34em;text-transform:uppercase;font-size:11px;color:var(--gold);font-weight:600;
+          text-shadow:0 2px 12px rgba(0,0,0,.6)}
+  h1{font-family:var(--disp);font-weight:800;font-size:58px;line-height:1.0;letter-spacing:-1.4px;text-shadow:0 4px 30px rgba(0,0,0,.7)}
+  h2{font-family:var(--disp);font-weight:800;font-size:40px;line-height:1.04;letter-spacing:-.8px;text-shadow:0 4px 26px rgba(0,0,0,.7)}
+  h3{font-family:var(--disp);font-weight:700;font-size:17px;letter-spacing:-.2px}
+  h4{font-family:var(--disp);font-weight:700;font-size:16px;letter-spacing:.02em}
+  p{color:var(--muted);font-size:14.5px;line-height:1.62}
+  .lead{font-size:19px;color:#EDEEFF;line-height:1.5;text-shadow:0 2px 16px rgba(0,0,0,.6)}
+  .gold{color:var(--gold)} .wht{color:#fff} .vio{color:var(--violet)}
+  .push{margin-top:auto}
+
+  /* inline stats — no boxes, hairline dividers */
+  .stats{display:flex;flex-wrap:wrap}
+  .stats .st{padding:0 26px;border-left:1px solid var(--line)}
+  .stats .st:first-child{padding-left:0;border-left:0}
+  .st .n{font-family:var(--disp);font-weight:800;font-size:40px;color:var(--gold);line-height:1;text-shadow:0 3px 18px rgba(0,0,0,.6)}
+  .st .n i{font-style:normal;font-size:18px}
+  .st .n.wht{color:#fff}
+  .st .l{display:block;font-size:11.5px;color:var(--soft);margin-top:7px;letter-spacing:.02em}
+
+  /* buttons (CTA, não é caixa decorativa) */
   .btn{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(180deg,var(--gold),var(--gold-2));color:#1b1403;
-    font-family:var(--disp);font-weight:700;font-size:14.5px;padding:13px 20px;border-radius:var(--pill);box-shadow:0 12px 30px rgba(245,193,78,.34)}
-  .btn.out{background:rgba(255,255,255,.05);color:var(--ink);border:1.5px solid var(--line-2);box-shadow:none}
-  .logo{display:flex;align-items:center;gap:10px;font-family:var(--disp);font-weight:800;font-size:16px;letter-spacing:.02em}
-  .logo .dot{width:26px;height:26px;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--gold),#a9741b);box-shadow:var(--glow)}
-  .foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding-top:10px;font-size:10.5px;color:var(--muted)}
-  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
-  .grid4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}
-  /* photo — duotone + rounded */
-  .ph{position:relative;border-radius:var(--r);overflow:hidden;border:1px solid var(--line);box-shadow:var(--sh)}
-  .ph img{width:100%;height:100%;object-fit:cover;display:block;filter:contrast(1.08) saturate(1.05) brightness(.96)}
-  .ph::after{content:"";position:absolute;inset:0;background:linear-gradient(180deg,rgba(76,58,134,.15),rgba(5,8,26,.5));mix-blend-mode:multiply}
-  .ph .cap{position:absolute;left:12px;bottom:10px;z-index:2;font-size:10.5px;color:#EAEafc;background:rgba(5,8,26,.5);border:1px solid var(--line);padding:4px 10px;border-radius:var(--pill)}
-  .statnum{font-family:var(--disp);font-weight:800;font-size:38px;color:var(--gold);line-height:1}
-  .statlbl{font-size:11px;color:var(--muted);margin-top:4px}
-  .ring{width:112px;height:112px;border-radius:50%;display:grid;place-items:center;background:conic-gradient(var(--gold) var(--p,100%),rgba(255,255,255,.08) 0)}
-  .ring .inner{width:86px;height:86px;border-radius:50%;background:#0c1030;display:grid;place-items:center;text-align:center}
-  .bars{display:flex;align-items:flex-end;gap:24px;height:140px;padding:0 4px}
-  .bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:7px;height:100%;justify-content:flex-end}
-  .bar .col{width:60%;border-radius:12px 12px 6px 6px}
-  .bar .v{font-family:var(--disp);font-weight:700;font-size:14px}
-  .tl{display:grid;grid-template-columns:repeat(4,1fr);gap:0;margin-top:6px}
-  .tl .st{position:relative;padding:0 9px}
-  .tl .st .n{width:38px;height:38px;border-radius:14px;display:grid;place-items:center;font-family:var(--disp);font-weight:700;color:var(--gold);
-    background:rgba(245,193,78,.1);border:1px solid rgba(245,193,78,.55);margin-bottom:10px}
-  .tl .st::before{content:"";position:absolute;top:19px;left:-50%;width:100%;height:2px;background:linear-gradient(90deg,transparent,rgba(245,193,78,.4));border-radius:2px}
-  .tl .st:first-child::before{display:none}
-  .cmp li{list-style:none;display:flex;gap:9px;align-items:flex-start;padding:6px 0;font-size:13px;color:#D7DAF4}
-  .cmp .x{color:var(--red);font-weight:700} .cmp .v{color:var(--green);font-weight:700}
+       font-family:var(--disp);font-weight:700;font-size:15px;padding:14px 22px;border-radius:999px;box-shadow:0 14px 34px rgba(245,193,78,.4)}
+  .btn.out{background:rgba(255,255,255,.07);color:#fff;border:1.5px solid var(--line);box-shadow:none;backdrop-filter:blur(2px)}
+  .btns{display:flex;gap:13px;align-items:center;flex-wrap:wrap}
+
+  /* comparison — two columns + hairline divider, sem cards */
+  .cols{display:grid;grid-template-columns:1fr 1px 1fr;gap:26px;align-items:start}
+  .cols .div{background:linear-gradient(180deg,transparent,var(--line),transparent)}
+  .rl{list-style:none}
+  .rl li{display:flex;gap:11px;align-items:flex-start;padding:9px 0;font-size:15px;color:#E4E6FA;border-bottom:1px solid rgba(255,255,255,.08)}
+  .rl li:last-child{border-bottom:0}
+  .rl .x{color:var(--red);font-weight:800} .rl .v{color:var(--green);font-weight:800}
+  .lbl{font-family:var(--disp);font-weight:700;font-size:13px;letter-spacing:.14em;text-transform:uppercase}
+  .lbl.bad{color:var(--red)} .lbl.good{color:var(--green)}
+
+  /* numbered steps — overlay text, sem caixas */
+  .steps{display:grid;grid-template-columns:repeat(4,1fr);gap:22px}
+  .step .k{font-family:var(--disp);font-weight:800;font-size:34px;color:var(--gold);line-height:1;
+           -webkit-text-stroke:0;text-shadow:0 3px 16px rgba(0,0,0,.6)}
+  .step h3{margin:10px 0 5px}
+  .step{border-top:2px solid rgba(245,193,78,.5);padding-top:12px}
+
+  /* mega numbers for o modelo */
+  .mega{display:flex;gap:46px;flex-wrap:wrap}
+  .mega .m{font-family:var(--disp);font-weight:800;font-size:68px;line-height:.95;text-shadow:0 4px 26px rgba(0,0,0,.65)}
+  .mega .lx{font-size:14px;color:var(--muted);margin-top:8px;max-width:220px}
+  /* custo scale — rows + hairlines, sem barras-caixa */
+  .scale{margin-top:6px}
+  .scale .row{display:flex;align-items:center;justify-content:space-between;padding:13px 0;border-bottom:1px solid rgba(255,255,255,.12)}
+  .scale .row span{font-size:15px;color:#E4E6FA}
+  .scale .row b{font-family:var(--disp);font-weight:800;font-size:16px;letter-spacing:.1em;text-transform:uppercase}
+  .hi-red{color:var(--red)} .hi-amber{color:var(--gold)} .hi-green{color:var(--green)}
+
+  /* faixas BNCC — 4 colunas tipográficas */
+  .faixas{display:grid;grid-template-columns:repeat(4,1fr);gap:0}
+  .faixas .fx{padding:0 20px;border-left:1px solid var(--line)}
+  .faixas .fx:first-child{padding-left:0;border-left:0}
+  .faixas .fx h4{color:var(--violet)}
+  .faixas .fx p{margin-top:8px;font-size:13px}
+  .trio{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;margin-top:4px}
+  .trio .t h4{color:var(--gold);font-size:15px}
+  .trio .t p{margin-top:6px}
+
+  .quote{font-family:var(--disp);font-weight:600;font-size:27px;line-height:1.3;color:#fff;letter-spacing:-.4px;
+         text-shadow:0 3px 22px rgba(0,0,0,.7);max-width:150mm;border-left:3px solid var(--gold);padding-left:20px}
+
+  .foot{margin-top:auto;display:flex;align-items:center;justify-content:space-between;
+        border-top:1px solid rgba(255,255,255,.16);padding-top:12px;font-size:11px;color:var(--soft)}
+
+  /* contato CTA — texto sobre scrim, sem card */
+  .contact{display:flex;gap:20px;align-items:center}
+  .contact img.me{width:96px;height:96px;border-radius:20px;object-fit:cover;border:2px solid var(--gold);box-shadow:var(--glow)}
+  .cgrid{display:grid;grid-template-columns:1fr 1fr;gap:7px 26px;margin-top:4px}
+  .cgrid p{font-size:13.5px;color:#E4E6FA}
+
   .print-bar{position:fixed;top:14px;right:14px;z-index:99}
   .print-bar button{background:var(--gold);color:#1b1403;border:0;border-radius:12px;padding:10px 16px;font-weight:700;font-family:var(--disp);cursor:pointer}
-  @media print{.print-bar{display:none}.page{margin:0!important;page-break-after:always}@page{size:A4;margin:0}}
+  @media print{.print-bar{display:none}.slide{margin:0!important;page-break-after:always}@page{size:A4;margin:0}}
 </style>
 </head>
 <body>
 <div class="print-bar"><button onclick="window.print()">🖨️ Salvar como PDF</button></div>
 
 <!-- 1 · HERO -->
-<section class="page" style="padding:0">
-  <div class="ph" style="position:absolute;inset:0;border-radius:0;border:0;box-shadow:none">
-    <img src="assets/projecao.jpg" alt="Interior do planetário em projeção 360">
-    <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(5,8,26,.5),rgba(5,8,26,.78) 52%,rgba(5,8,26,.96))"></div>
-  </div>
-  <span class="stars"></span>
-  <div class="pad" style="z-index:3">
-    <div style="display:flex;justify-content:space-between;align-items:center">
-      <div class="logo"><span class="dot"></span> ORION PLANETÁRIOS</div>
-      <span class="pill">▲ Agenda 2026 · poucas datas por cidade</span>
+<section class="slide">
+  <div class="bg" style="background-image:url('assets/fundos/1.jpg')"></div>
+  <div class="scrim s-hero"></div><div class="scrim vign"></div>
+  <div class="wrap">
+    <div class="top">
+      <img class="brand" src="assets/logo-orion.png" alt="Orion Planetários">
+      <span class="tag">▲ Agenda 2026 · poucas datas por cidade</span>
     </div>
-    <div style="margin-top:auto">
+    <div class="push">
       <span class="kicker">Planetário Itinerante 360° · do Infantil ao Médio</span>
-      <h1 style="margin:14px 0 0">A aula que seus alunos<br><span class="gold">nunca vão esquecer</span>.</h1>
-      <p class="lead" style="margin:15px 0 20px;max-width:150mm">Um planetário imersivo montado na sua escola — ciência, encantamento e BNCC num único dia. <span class="wht">Sem custo para a instituição. E a escola ainda recebe 10%.</span></p>
-      <div class="grid4" style="max-width:150mm;margin-bottom:22px">
-        <div class="card" style="padding:12px 14px"><div class="statnum">+200<span style="font-size:18px">mil</span></div><div class="statlbl">alunos impactados</div></div>
-        <div class="card" style="padding:12px 14px"><div class="statnum">360°</div><div class="statlbl">imersão real</div></div>
-        <div class="card" style="padding:12px 14px"><div class="statnum">R$0</div><div class="statlbl">custo p/ escola</div></div>
-        <div class="card" style="padding:12px 14px"><div class="statnum">10%</div><div class="statlbl">de repasse</div></div>
+      <h1 style="margin:16px 0 0">A aula que seus alunos<br><span class="gold">nunca vão esquecer</span>.</h1>
+      <p class="lead" style="margin:18px 0 26px;max-width:155mm">Um planetário imersivo montado dentro da sua escola — ciência, encantamento e BNCC num único dia. <span class="wht">Sem custo para a instituição. E a escola ainda recebe 10%.</span></p>
+      <div class="stats" style="margin-bottom:28px">
+        <div class="st"><div class="n">+200<i>mil</i></div><div class="l">alunos impactados</div></div>
+        <div class="st"><div class="n">360°</div><div class="l">imersão real</div></div>
+        <div class="st"><div class="n wht">R$0</div><div class="l">custo p/ escola</div></div>
+        <div class="st"><div class="n">10%</div><div class="l">de repasse</div></div>
       </div>
-      <div style="display:flex;gap:12px;align-items:center">
+      <div class="btns">
         <a class="btn" href="https://wa.me/5547992009480?text=Oi%20Edmar!%20Quero%20garantir%20uma%20data%20do%20Planet%C3%A1rio%20para%20a%20minha%20escola.">Garanta sua data hoje →</a>
         <a class="btn out" href="https://www.youtube.com/watch?v=Lr5xn2BRIG0">▶ Assistir ao vídeo</a>
       </div>
@@ -119,178 +156,171 @@
   </div>
 </section>
 
-<!-- 2 · GIRO + COMPARATIVO -->
-<section class="page">
-  <span class="stars"></span>
-  <div class="pad">
+<!-- 2 · POR QUE AGORA -->
+<section class="slide">
+  <div class="bg" style="background-image:url('assets/fundos/2.jpg')"></div>
+  <div class="scrim s-veil"></div><div class="scrim vign"></div>
+  <div class="wrap">
     <span class="kicker">Por que agora</span>
-    <h2 style="margin-top:8px;max-width:162mm">Passeio externo cansa a equipe e pesa no bolso.<br><span class="gold">E se a experiência viesse até você?</span></h2>
-    <p class="lead" style="margin:12px 0 16px;max-width:165mm">A Orion inverte a lógica: em vez de levar os alunos ao universo, levamos o universo à escola — sem ônibus, sem seguro, sem autorização, sem custo.</p>
-    <div class="grid2" style="flex:1;align-items:stretch">
-      <div class="card" style="border-color:rgba(255,138,138,.3)">
-        <span class="pill ghost" style="color:var(--red);border-color:rgba(255,138,138,.5)">✕ Passeio externo</span>
-        <ul class="cmp" style="margin-top:12px">
+    <h2 style="margin:12px 0 0;max-width:168mm">O passeio externo cansa, pesa no bolso e assume risco.<br><span class="gold">E se o universo viesse até você?</span></h2>
+    <p class="lead" style="margin:16px 0 30px;max-width:165mm">A Orion inverte a lógica: em vez de levar os alunos ao universo, levamos o universo à escola — sem ônibus, sem seguro, sem autorização, sem custo.</p>
+    <div class="cols push" style="margin-bottom:auto">
+      <div class="col">
+        <span class="lbl bad">✕ Passeio externo</span>
+        <ul class="rl" style="margin-top:12px">
           <li><span class="x">✕</span> Transporte, seguro e autorizações</li>
           <li><span class="x">✕</span> Custo alto por aluno</li>
           <li><span class="x">✕</span> Risco com a turma na rua</li>
-          <li><span class="x">✕</span> Dia perdido em deslocamento</li>
+          <li><span class="x">✕</span> Um dia inteiro perdido no deslocamento</li>
           <li><span class="x">✕</span> Divulgação por conta da escola</li>
         </ul>
       </div>
-      <div class="card" style="border-color:rgba(78,216,160,.4);background:linear-gradient(180deg,rgba(78,216,160,.12),rgba(255,255,255,.05))">
-        <span class="pill" style="background:linear-gradient(180deg,var(--green),#2fae7d);color:#04231a;box-shadow:0 0 24px rgba(78,216,160,.4)">✓ Planetário Orion</span>
-        <ul class="cmp" style="margin-top:12px">
-          <li><span class="v">✓</span> Chega, monta e opera no seu pátio</li>
+      <div class="div"></div>
+      <div class="col">
+        <span class="lbl good">✓ Planetário Orion</span>
+        <ul class="rl" style="margin-top:12px">
+          <li><span class="v">✓</span> Chega, monta e opera no seu próprio pátio</li>
           <li><span class="v">✓</span> <span class="wht">Custo zero para a instituição</span></li>
           <li><span class="v">✓</span> Alunos seguros, dentro da escola</li>
           <li><span class="v">✓</span> Sessões rápidas, turma a turma</li>
-          <li><span class="v">✓</span> <span class="wht">Orion divulga + 10% p/ a escola</span></li>
+          <li><span class="v">✓</span> <span class="wht">A Orion divulga + 10% para a escola</span></li>
         </ul>
       </div>
     </div>
-    <div class="ph" style="height:50mm;margin-top:12px"><img src="assets/sessao1.jpg" alt="Alunos na sessão do planetário"><span class="cap">Sessão real · rede parceira</span></div>
-    <div class="foot"><span>Orion Planetários · Planetário Itinerante</span><span>02</span></div>
+    <div class="foot"><img class="brand-sm" src="assets/logo-orion.png" alt="Orion Planetários"><span>02</span></div>
   </div>
 </section>
 
-<!-- 3 · COMO FUNCIONA -->
-<section class="page">
-  <span class="stars"></span>
-  <div class="pad">
-    <span class="kicker">Como funciona</span>
-    <h2 style="margin-top:8px">Simples para a escola. Inesquecível para o aluno.</h2>
-    <div class="tl" style="margin-top:18px">
-      <div class="st"><div class="n">1</div><h3>A gente vai até você</h3><p>Levamos e montamos o domo na quadra ou pátio. Zero logística.</p></div>
-      <div class="st"><div class="n">2</div><h3>Sessões por turma</h3><p>~30 min por grupo, conteúdo por faixa etária.</p></div>
-      <div class="st"><div class="n">3</div><h3>Nós divulgamos</h3><p>Orion cuida da comunicação. Você só organiza a escala.</p></div>
-      <div class="st"><div class="n">4</div><h3>Vira história</h3><p>Alunos encantados — e 1 leva um telescópio.</p></div>
+<!-- 3 · COMO FUNCIONA (foto real full-bleed) -->
+<section class="slide">
+  <div class="bg" style="background-image:url('assets/dome-wide.jpg')"></div>
+  <div class="scrim s-bottom"></div><div class="scrim vign"></div>
+  <div class="wrap">
+    <div class="top">
+      <img class="brand-sm" src="assets/logo-orion.png" alt="Orion Planetários">
+      <span class="tag ghost">Como funciona</span>
     </div>
-    <div class="grid3" style="margin-top:16px">
-      <div class="ph" style="height:44mm"><img src="assets/sessao2.jpg" alt="Alunos entrando no domo"></div>
-      <div class="ph" style="height:44mm"><img src="assets/interior.jpg" alt="Interior do domo"></div>
-      <div class="ph" style="height:44mm"><img src="assets/sessao3.jpg" alt="Sessão de astronomia"></div>
+    <div class="push">
+      <h2 style="max-width:160mm">Simples para a escola.<br><span class="gold">Inesquecível para o aluno.</span></h2>
+      <div class="steps" style="margin:26px 0 22px">
+        <div class="step"><div class="k">1</div><h3>A gente vai até você</h3><p>Levamos e montamos o domo na quadra ou pátio. Zero logística.</p></div>
+        <div class="step"><div class="k">2</div><h3>Sessões por turma</h3><p>~30 min por grupo, conteúdo por faixa etária.</p></div>
+        <div class="step"><div class="k">3</div><h3>Nós divulgamos</h3><p>A Orion cuida da comunicação. Você só organiza a escala.</p></div>
+        <div class="step"><div class="k">4</div><h3>Vira história</h3><p>Alunos encantados — e um leva um telescópio para casa.</p></div>
+      </div>
+      <p class="lead" style="font-size:15.5px;max-width:168mm"><span class="gold">Estrutura mínima:</span> espaço coberto <b class="wht">~7×6 m</b> · pé-direito <b class="wht">3,2 m</b> · tomada <b class="wht">220V</b>. Nós levamos todo o resto.</p>
     </div>
-    <div class="card" style="margin-top:14px;display:flex;gap:16px;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(139,108,224,.16),rgba(255,255,255,.05))">
-      <div><h3 class="wht">Estrutura mínima</h3><p style="margin-top:4px">Espaço coberto <b class="wht">7×8 m</b> · pé-direito <b class="wht">3,5 m</b> · tomada <b class="wht">220V</b>. Nós levamos o resto.</p></div>
-      <a class="btn out" href="https://www.youtube.com/watch?v=b6ia3OA_Xgg" style="white-space:nowrap">▶ Ver na prática</a>
-    </div>
-    <div class="foot"><span>@orionplanetarios</span><span>03</span></div>
+    <div class="foot"><span>@orionplanetarios · orionplanetarios.com.br</span><span>03</span></div>
   </div>
 </section>
 
-<!-- 4 · MODELO (gráficos) -->
-<section class="page">
-  <span class="stars"></span>
-  <div class="pad">
+<!-- 4 · O MODELO -->
+<section class="slide">
+  <div class="bg" style="background-image:url('assets/fundos/4.jpg')"></div>
+  <div class="scrim s-veil"></div><div class="scrim vign"></div>
+  <div class="wrap">
     <span class="kicker">O modelo que ganha a direção</span>
-    <h2 style="margin-top:8px">A escola não paga. <span class="gold">A escola recebe.</span></h2>
-    <div class="grid2" style="margin-top:16px;align-items:stretch">
-      <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;background:linear-gradient(180deg,rgba(245,193,78,.16),rgba(255,255,255,.05));border-color:rgba(245,193,78,.4)">
-        <div class="ring" style="--p:100%"><div class="inner"><div><div style="font-family:var(--disp);font-weight:800;font-size:28px;color:var(--gold)">R$0</div><div style="font-size:9.5px;color:var(--muted)">custo escola</div></div></div></div>
-        <h3 class="wht" style="margin-top:14px">Ingresso direto do aluno</h3>
-        <p>A Orion opera, vende via Sympla e divulga. A escola não investe nada — e ainda recebe <b class="gold">10% do arrecadado</b>.</p>
-      </div>
-      <div class="card">
-        <h3 class="wht">Custo por aluno — comparativo</h3>
-        <p style="font-size:12px;margin:2px 0 10px">Experiência imersiva sem o peso de um passeio externo.</p>
-        <div class="bars">
-          <div class="bar"><span class="v" style="color:var(--red)">Alto</span><div class="col" style="height:80%;background:linear-gradient(180deg,#ffb0b0,#e25b5b)"></div><span style="font-size:10.5px;color:var(--muted);text-align:center">Passeio<br>externo</span></div>
-          <div class="bar"><span class="v" style="color:#ffd27a">Médio</span><div class="col" style="height:52%;background:linear-gradient(180deg,#ffd27a,#e7a82e)"></div><span style="font-size:10.5px;color:var(--muted);text-align:center">Atração<br>paga</span></div>
-          <div class="bar"><span class="v" style="color:var(--green)">R$0</span><div class="col" style="height:12%;background:linear-gradient(180deg,#8ff3cb,#2fae7d)"></div><span style="font-size:10.5px;color:var(--muted);text-align:center">Orion na<br>escola</span></div>
-        </div>
+    <h2 style="margin:12px 0 0">A escola não paga. <span class="gold">A escola recebe.</span></h2>
+    <div class="mega" style="margin:34px 0 10px">
+      <div class="m-item"><div class="m wht">R$0</div><div class="lx">de custo para a instituição. A Orion opera, vende via Sympla e faz toda a divulgação.</div></div>
+      <div class="m-item"><div class="m gold">10%</div><div class="lx">do total arrecadado fica com a escola — o aluno paga o ingresso (ref. R$ 30).</div></div>
+      <div class="m-item"><div class="m" style="color:var(--violet)">🔭 1</div><div class="lx">telescópio semiprofissional sorteado entre os alunos participantes.</div></div>
+    </div>
+    <div class="push" style="margin-bottom:auto;max-width:150mm">
+      <h3 class="wht" style="margin-bottom:4px">Custo por aluno — sem o peso de um passeio externo</h3>
+      <div class="scale">
+        <div class="row"><span>Passeio externo (ônibus + ingresso + seguro)</span><b class="hi-red">Alto</b></div>
+        <div class="row"><span>Atração paga na cidade</span><b class="hi-amber">Médio</b></div>
+        <div class="row"><span>Planetário Orion na escola</span><b class="hi-green">R$0 p/ escola</b></div>
       </div>
     </div>
-    <div class="grid3" style="margin-top:13px">
-      <div class="card"><div class="statnum" style="font-size:30px">1 dia</div><div class="statlbl">na escola, todas as turmas</div></div>
-      <div class="card"><div class="statnum" style="font-size:30px">Sympla</div><div class="statlbl">ingresso online, sem caixa</div></div>
-      <div class="card"><div class="statnum" style="font-size:30px">🔭 1</div><div class="statlbl">telescópio sorteado p/ aluno</div></div>
-    </div>
-    <div class="foot"><span>Modelo principal (ingresso). Diária fechada sob consulta.</span><span>04</span></div>
+    <div class="foot"><img class="brand-sm" src="assets/logo-orion.png" alt="Orion Planetários"><span>Modelo principal (ingresso) · diária fechada sob consulta &nbsp;·&nbsp; 04</span></div>
   </div>
 </section>
 
-<!-- 5 · PROVA SOCIAL -->
-<section class="page">
-  <span class="stars"></span>
-  <div class="pad">
-    <span class="kicker">Prova social</span>
-    <h2 style="margin-top:8px">Já somos parte da história de <span class="gold">milhares de alunos</span>.</h2>
-    <div class="grid3" style="margin-top:16px">
-      <div class="card" style="text-align:center"><div class="statnum" style="font-size:44px">+200<span style="font-size:20px">mil</span></div><div class="statlbl">alunos impactados</div></div>
-      <div class="card" style="display:flex;justify-content:center"><div class="ring" style="--p:100%"><div class="inner"><div><div style="font-family:var(--disp);font-weight:800;font-size:20px">100%</div><div style="font-size:9.5px;color:var(--muted)">montado<br>na escola</div></div></div></div></div>
-      <div class="card" style="text-align:center"><div class="statnum" style="font-size:44px">2</div><div class="statlbl">redes: pública e particular</div></div>
+<!-- 5 · PROVA SOCIAL (foto real full-bleed) -->
+<section class="slide">
+  <div class="bg" style="background-image:url('assets/sessao1.jpg')"></div>
+  <div class="scrim s-bottom"></div><div class="scrim vign"></div>
+  <div class="wrap">
+    <div class="top">
+      <img class="brand-sm" src="assets/logo-orion.png" alt="Orion Planetários">
+      <span class="tag ghost">Prova social</span>
     </div>
-    <div class="card" style="margin-top:14px;border-left:3px solid var(--gold)">
-      <p style="font-family:var(--disp);font-size:19px;color:#EEF0FF;line-height:1.4">“Uma experiência surreal para as crianças — e sem o desgaste de organizar um passeio externo.”</p>
-      <p style="margin-top:7px;font-size:12px">— feedback recorrente de coordenações parceiras</p>
-    </div>
-    <div class="grid3" style="margin-top:13px;flex:1">
-      <div class="ph"><img src="assets/sessao4.jpg" alt="Planetário na escola"></div>
-      <div class="ph"><img src="assets/sessao5.jpg" alt="Alunos na experiência"></div>
-      <div class="ph"><img src="assets/dome3.jpg" alt="Domo montado"></div>
-    </div>
-    <div class="card" style="margin-top:13px;display:flex;align-items:center;justify-content:space-between;background:linear-gradient(180deg,rgba(139,108,224,.16),rgba(255,255,255,.05))">
-      <div><h3 class="wht">Veja os vídeos reais nas escolas</h3><p style="margin-top:2px">Bastidores, sessões e depoimentos.</p></div>
-      <div style="display:flex;gap:8px">
-        <a class="btn out" href="https://www.youtube.com/watch?v=Lr5xn2BRIG0">▶ Institucional</a>
-        <a class="btn" href="https://www.youtube.com/watch?v=b6ia3OA_Xgg">▶ Depoimentos</a>
+    <div class="push">
+      <p class="quote" style="margin-bottom:28px">“Uma experiência surreal para as crianças — e sem o desgaste de organizar um passeio externo.”<br><span style="font-family:var(--sans);font-size:13px;font-weight:400;color:var(--soft);display:block;margin-top:10px;border:0;padding:0">— feedback recorrente de coordenações parceiras</span></p>
+      <div class="stats">
+        <div class="st"><div class="n">+200<i>mil</i></div><div class="l">alunos impactados</div></div>
+        <div class="st"><div class="n wht">100%</div><div class="l">montado dentro da escola</div></div>
+        <div class="st"><div class="n">2</div><div class="l">redes: pública e particular</div></div>
+        <div class="st"><div class="n">SC+SP</div><div class="l">em expansão</div></div>
       </div>
     </div>
-    <div class="foot"><span>orionplanetarios.com.br</span><span>05</span></div>
+    <div class="foot">
+      <div class="btns">
+        <a class="btn out" href="https://www.youtube.com/watch?v=Lr5xn2BRIG0">▶ Vídeo institucional</a>
+        <a class="btn out" href="https://www.youtube.com/watch?v=b6ia3OA_Xgg">▶ Depoimentos reais</a>
+      </div>
+      <span>05</span>
+    </div>
   </div>
 </section>
 
 <!-- 6 · BNCC -->
-<section class="page">
-  <span class="stars"></span>
-  <div class="pad">
+<section class="slide">
+  <div class="bg" style="background-image:url('assets/fundos/3.jpg')"></div>
+  <div class="scrim s-veil"></div><div class="scrim vign"></div>
+  <div class="wrap">
     <span class="kicker">Alinhado à sala de aula</span>
-    <h2 style="margin-top:8px">Conteúdo por faixa etária, conectado à <span class="gold">BNCC</span>.</h2>
-    <p class="lead" style="margin:12px 0 16px;max-width:165mm">Não é só um espetáculo: é aula. Cada sessão é adaptada ao que a turma estuda — de Ciências da Natureza à Astronomia.</p>
-    <div class="grid4">
-      <div class="card"><div class="statnum" style="font-size:18px;color:var(--violet)">Infantil</div><p style="margin-top:6px">Céu, Sol, Lua e estrelas com encantamento.</p></div>
-      <div class="card"><div class="statnum" style="font-size:18px;color:var(--violet)">Fund. I</div><p style="margin-top:6px">Sistema Solar, dia e noite, estações.</p></div>
-      <div class="card"><div class="statnum" style="font-size:18px;color:var(--violet)">Fund. II</div><p style="margin-top:6px">Gravidade, fases, eclipses, escala.</p></div>
-      <div class="card"><div class="statnum" style="font-size:18px;color:var(--violet)">Médio</div><p style="margin-top:6px">Astrofísica e método científico.</p></div>
+    <h2 style="margin:12px 0 0">Não é passeio. <span class="gold">É aula.</span></h2>
+    <p class="lead" style="margin:16px 0 30px;max-width:165mm">Cada sessão é adaptada ao que a turma estuda — de Ciências da Natureza à Astronomia, conectada à <b class="wht">BNCC</b>.</p>
+    <div class="faixas">
+      <div class="fx"><h4>Infantil</h4><p>Céu, Sol, Lua e estrelas com muito encantamento.</p></div>
+      <div class="fx"><h4>Fund. I</h4><p>Sistema Solar, dia e noite, estações do ano.</p></div>
+      <div class="fx"><h4>Fund. II</h4><p>Gravidade, fases da Lua, eclipses e escala.</p></div>
+      <div class="fx"><h4>Médio</h4><p>Astrofísica, método científico e o cosmos.</p></div>
     </div>
-    <div class="grid3" style="margin-top:14px">
-      <div class="card"><h3 class="gold">Para a coordenação</h3><p style="margin-top:6px">Evento pedagógico pronto, alinhado à BNCC, sem montar nada.</p></div>
-      <div class="card"><h3 class="gold">Para a direção</h3><p style="margin-top:6px">A escola se destaca na cidade e fortalece as matrículas.</p></div>
-      <div class="card"><h3 class="gold">Para as famílias</h3><p style="margin-top:6px">Uma experiência rara e segura, dentro da escola.</p></div>
+    <div class="trio push" style="margin-bottom:auto">
+      <div class="t"><h4>Para a coordenação</h4><p>Evento pedagógico pronto, alinhado à BNCC, sem montar nada.</p></div>
+      <div class="t"><h4>Para a direção</h4><p>A escola se destaca na cidade e fortalece as matrículas.</p></div>
+      <div class="t"><h4>Para as famílias</h4><p>Uma experiência rara e segura, dentro da escola.</p></div>
     </div>
-    <div class="ph" style="height:54mm;margin-top:14px"><img src="assets/dome-wide.jpg" alt="Planetário montado na escola"><span class="cap">Montagem no pátio coberto</span></div>
-    <div class="foot"><span>Orion Planetários</span><span>06</span></div>
+    <div class="foot"><img class="brand-sm" src="assets/logo-orion.png" alt="Orion Planetários"><span>06</span></div>
   </div>
 </section>
 
-<!-- 7 · CTA -->
-<section class="page">
-  <span class="stars"></span>
-  <div class="pad">
-    <span class="pill">▲ Agenda 2026 · poucas datas por cidade</span>
-    <h1 style="font-size:38px;margin:14px 0 0">Garanta a data da sua escola<br><span class="gold">antes que a sua região feche</span>.</h1>
-    <p class="lead" style="margin:13px 0 0;max-width:160mm">Nossa agenda é itinerante: passamos por cada cidade em janelas curtas. Faz sentido reservar uma data agora, enquanto ainda há vagas na sua região? É só uma conversa de 15 minutos.</p>
-    <div class="card" style="margin-top:18px;display:flex;gap:18px;align-items:center;border-color:rgba(139,108,224,.45);background:linear-gradient(180deg,rgba(139,108,224,.2),rgba(255,255,255,.05))">
-      <img src="assets/edmar.webp" alt="Edmar Santos" style="width:92px;height:92px;border-radius:24px;object-fit:cover;border:2px solid var(--gold);box-shadow:var(--glow)" onerror="this.style.display='none'">
-      <div style="flex:1">
-        <span class="kicker">Fale comigo</span>
-        <h2 style="font-size:23px;margin:4px 0">Edmar Santos</h2>
-        <p class="wht" style="font-size:12.5px">Representante Oficial — Orion Planetários (SC &amp; SP)</p>
-        <div class="grid2" style="margin-top:10px;gap:5px 18px">
-          <p><b class="gold">WhatsApp</b> &nbsp;<a href="https://wa.me/5547992009480">(47) 99200-9480</a></p>
-          <p><b class="gold">E-mail</b> &nbsp;<a href="mailto:edmar.orionplanetarios@gmail.com">edmar.orionplanetarios@gmail.com</a></p>
-          <p><b class="gold">Instagram</b> &nbsp;<a href="https://www.instagram.com/orionplanetarios/">@orionplanetarios</a></p>
-          <p><b class="gold">Site</b> &nbsp;<a href="https://orionplanetarios.com.br">orionplanetarios.com.br</a></p>
+<!-- 7 · CTA (foto real full-bleed) -->
+<section class="slide">
+  <div class="bg" style="background-image:url('assets/dome1.jpg')"></div>
+  <div class="scrim s-bottom"></div><div class="scrim vign"></div>
+  <div class="wrap">
+    <div class="top">
+      <img class="brand-sm" src="assets/logo-orion.png" alt="Orion Planetários">
+      <span class="tag">▲ Agenda 2026 · poucas datas por cidade</span>
+    </div>
+    <div class="push">
+      <h1 style="font-size:46px;max-width:172mm">Garanta a data da sua escola<br><span class="gold">antes que a sua região feche</span>.</h1>
+      <p class="lead" style="margin:16px 0 26px;max-width:162mm">Nossa agenda é itinerante: passamos por cada cidade em janelas curtas. Vamos reservar a sua data agora, enquanto ainda há vagas na região? É só uma conversa de 15 minutos.</p>
+      <div class="contact" style="margin-bottom:24px">
+        <img class="me" src="assets/edmar.webp" alt="Edmar Santos" onerror="this.style.display='none'">
+        <div>
+          <span class="kicker">Fale comigo</span>
+          <h3 class="wht" style="font-size:22px;margin:4px 0 2px">Edmar Santos — Representante Oficial (SC &amp; SP)</h3>
+          <div class="cgrid">
+            <p><b class="gold">WhatsApp</b> &nbsp;(47) 99200-9480</p>
+            <p><b class="gold">E-mail</b> &nbsp;edmar.orionplanetarios@gmail.com</p>
+            <p><b class="gold">Instagram</b> &nbsp;@orionplanetarios</p>
+            <p><b class="gold">Site</b> &nbsp;orionplanetarios.com.br</p>
+          </div>
         </div>
       </div>
+      <div class="btns">
+        <a class="btn" href="https://wa.me/5547992009480?text=Oi%20Edmar!%20Quero%20garantir%20uma%20data%20do%20Planet%C3%A1rio%20ainda%20este%20ano.">Quero garantir minha data →</a>
+        <a class="btn out" href="https://www.youtube.com/watch?v=Lr5xn2BRIG0">▶ Assistir ao vídeo</a>
+      </div>
     </div>
-    <div style="display:flex;gap:12px;margin-top:18px">
-      <a class="btn" href="https://wa.me/5547992009480?text=Oi%20Edmar!%20Quero%20garantir%20uma%20data%20do%20Planet%C3%A1rio%20ainda%20este%20ano.">Quero garantir minha data →</a>
-      <a class="btn out" href="https://www.youtube.com/watch?v=Lr5xn2BRIG0">▶ Assistir ao vídeo</a>
-    </div>
-    <div class="ph" style="height:46mm;margin-top:16px"><img src="assets/sessao1.jpg" alt="Alunos vivendo a experiência Orion"></div>
-    <div class="foot" style="border-color:rgba(255,255,255,.2)">
-      <div class="logo" style="font-size:13px"><span class="dot" style="width:20px;height:20px"></span> ORION PLANETÁRIOS</div>
+    <div class="foot" style="border-color:rgba(255,255,255,.22)">
+      <img class="brand-sm" src="assets/logo-orion.png" alt="Orion Planetários">
       <span>O universo inteiro — dentro da sua escola.</span>
     </div>
   </div>
