@@ -30,3 +30,7 @@ Thumbs.db
 node_modules/
 dist/
 *.log
+
+# Assets binários pesados (imagens de fundo etc.) — referência local, não versionar
+*.zip
+imagem de fundo.zip

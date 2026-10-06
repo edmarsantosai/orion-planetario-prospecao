@@ -1,0 +1,220 @@
+{
+  "name": "Orion — Prospecção Multicanal (seg-sex)",
+  "active": false,
+  "settings": { "timezone": "America/Sao_Paulo", "saveExecutionProgress": true },
+  "pinData": {},
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "0 9-18 * * 1-5" } ] } },
+      "id": "a1000000-0000-4000-8000-000000000001",
+      "name": "Agenda seg-sex 09-18",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [ -860, 300 ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT e.* FROM escolas e\nLEFT JOIN optout o ON o.escola_id = e.id\nWHERE e.status NOT IN ('fechado','descartado','opt-out')\n  AND (o.bloqueado_ate IS NULL OR o.bloqueado_ate < CURRENT_DATE)\n  AND e.data_d0 IS NOT NULL\n  AND e.email_institucional IS NOT NULL;",
+        "additionalFields": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000002",
+      "name": "Buscar escolas devidas",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [ -640, 300 ],
+      "credentials": { "postgres": { "id": "orion-pg", "name": "Orion Postgres" } }
+    },
+    {
+      "parameters": {
+        "jsCode": "const out = [];\nconst hoje = new Date();\nfor (const item of $input.all()) {\n  const e = item.json;\n  const d0 = new Date(e.data_d0);\n  const dias = Math.floor((hoje - d0) / 86400000);\n  let etapa = null, canal = null;\n  if (dias === 0) { etapa = 'D0'; canal = 'email'; }\n  else if (dias === 4) { etapa = 'D4'; canal = 'whatsapp'; }\n  else if (dias === 7) { etapa = 'D7'; canal = 'email'; }\n  else if (dias === 14) { etapa = 'D14'; canal = 'email'; }\n  if (!etapa) continue;\n  out.push({ json: { ...e, etapa, canal, dias } });\n}\nreturn out;"
+      },
+      "id": "a1000000-0000-4000-8000-000000000003",
+      "name": "Decidir toque",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [ -420, 300 ]
+    },
+    {
+      "parameters": {
+        "rules": { "values": [
+          { "conditions": { "options": { "caseSensitive": true }, "combinator": "and", "conditions": [ { "leftValue": "={{ $json.canal }}", "rightValue": "email", "operator": { "type": "string", "operation": "equals" } } ] }, "outputKey": "email" },
+          { "conditions": { "options": { "caseSensitive": true }, "combinator": "and", "conditions": [ { "leftValue": "={{ $json.canal }}", "rightValue": "whatsapp", "operator": { "type": "string", "operation": "equals" } } ] }, "outputKey": "whatsapp" }
+        ] },
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000004",
+      "name": "Canal?",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [ -200, 300 ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const anexo = '/home/node/.n8n/orion/apresentacao_orion_protegido.pdf';\nreturn $input.all().map(i => {\n  const e = i.json;\n  const coord = e.nome_coordenacao || 'equipe pedagógica';\n  const assunto = e.etapa === 'D7'\n    ? 'O que as escolas falam depois do planetário 🔭'\n    : `${e.nome_escola}: um planetário 360° na escola — sem custo para vocês`;\n  const corpo = `Olá, ${coord}, tudo bem?\\n\\nSou o Edmar, representante da Orion Planetários. Levamos um planetário imersivo 360° para dentro da escola — uma aula de astronomia alinhada à BNCC, do Infantil ao Médio.\\n\\nO melhor: a escola não paga nada. A Orion opera, faz toda a divulgação, e a instituição ainda recebe 10% do arrecadado. Os alunos concorrem a um telescópio.\\n\\nJá impactamos +200 mil alunos. Posso te mostrar como funciona numa conversa de 15 minutos?\\n\\nSegue em anexo a apresentação. Em ${e.cidade}, qual a melhor data para falarmos?\\n\\nAbraço,\\nEdmar Santos — Orion (SC & SP) · (47) 99200-9480\\n\\nSe não quiser mais receber contatos, responda \\\"sair\\\" e encerramos por aqui.`;\n  return { json: { ...e, assunto, corpo, anexo } };\n});"
+      },
+      "id": "a1000000-0000-4000-8000-000000000005",
+      "name": "Montar e-mail",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [ 40, 140 ]
+    },
+    {
+      "parameters": {
+        "conditions": { "options": { "caseSensitive": true }, "combinator": "and", "conditions": [
+          { "leftValue": "modo", "rightValue": "auto", "operator": { "type": "string", "operation": "equals" } },
+          { "leftValue": "={{ $json.aprovado }}", "rightValue": true, "operator": { "type": "boolean", "operation": "true", "singleValue": true } }
+        ] }
+      },
+      "id": "a1000000-0000-4000-8000-000000000006",
+      "name": "Pode enviar auto?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [ 280, 140 ],
+      "notes": "SEGURO: primeira condicao é literal 'modo' != 'auto' => sempre cai em rascunho (fila_revisar). Para ligar o auto-por-lote, troque 'modo' por 'auto' E mantenha aprovado=true nas escolas liberadas."
+    },
+    {
+      "parameters": {
+        "fromEmail": "comercial@edmarsantos.com.br",
+        "toEmail": "={{ $json.email_institucional }}",
+        "subject": "={{ $json.assunto }}",
+        "emailFormat": "text",
+        "text": "={{ $json.corpo }}",
+        "options": { "replyTo": "comercial@edmarsantos.com.br", "attachments": "={{ $json.anexo }}" }
+      },
+      "id": "a1000000-0000-4000-8000-000000000007",
+      "name": "Enviar e-mail (SMTP)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [ 520, 40 ],
+      "credentials": { "smtp": { "id": "orion-smtp", "name": "Orion SMTP HostGator" } }
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": { "__rl": true, "mode": "list", "value": "public" },
+        "table": { "__rl": true, "mode": "list", "value": "fila_revisar" },
+        "columns": { "mappingMode": "defineBelow", "value": {
+          "escola_id": "={{ $json.id }}", "assunto": "={{ $json.assunto }}",
+          "corpo": "={{ $json.corpo }}", "anexo": "={{ $json.anexo }}", "status": "revisar"
+        } }
+      },
+      "id": "a1000000-0000-4000-8000-000000000008",
+      "name": "Fila revisar (humano aprova)",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [ 520, 220 ],
+      "credentials": { "postgres": { "id": "orion-pg", "name": "Orion Postgres" } }
+    },
+    {
+      "parameters": {
+        "conditions": { "options": { "caseSensitive": true }, "combinator": "and", "conditions": [
+          { "leftValue": "={{ $json.wa_conversa_aberta }}", "rightValue": true, "operator": { "type": "boolean", "operation": "true", "singleValue": true } },
+          { "leftValue": "={{ $json.wa_toques }}", "rightValue": 2, "operator": { "type": "number", "operation": "lt" } },
+          { "leftValue": "={{ (Date.now() - new Date($json.wa_ultimo_inbound).getTime())/3600000 }}", "rightValue": 24, "operator": { "type": "number", "operation": "lt" } }
+        ] }
+      },
+      "id": "a1000000-0000-4000-8000-000000000009",
+      "name": "WhatsApp permitido?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [ 40, 440 ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.edmarsantos.com.br/message/sendText/INSTANCIA_EVOLUTION",
+        "sendHeaders": true,
+        "headerParameters": { "parameters": [ { "name": "apikey", "value": "DEFINIR_APIKEY_EVOLUTION" } ] },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"number\": \"{{ $json.telefone_institucional }}\",\n  \"text\": \"Olá, {{ $json.nome_coordenacao || 'equipe' }}! Aqui é o Edmar, da Orion Planetários. Deixo o resumo e o vídeo — se fizer sentido, marcamos 15 min para ver a melhor data em {{ $json.cidade }}. 🔭\"\n}",
+        "options": {}
+      },
+      "id": "a1000000-0000-4000-8000-000000000010",
+      "name": "Evolution API enviar",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [ 280, 360 ],
+      "notes": "Preencher INSTANCIA_EVOLUTION e DEFINIR_APIKEY_EVOLUTION. So dispara em conversa institucional ja aberta (24h)."
+    },
+    {
+      "parameters": {},
+      "id": "a1000000-0000-4000-8000-000000000011",
+      "name": "Pausar (sem toque)",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [ 280, 540 ]
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": { "__rl": true, "mode": "list", "value": "public" },
+        "table": { "__rl": true, "mode": "list", "value": "eventos" },
+        "columns": { "mappingMode": "defineBelow", "value": {
+          "escola_id": "={{ $json.id }}", "canal": "={{ $json.canal }}",
+          "etapa": "={{ $json.etapa }}", "acao": "disparo", "detalhe": "={{ $json.assunto || 'whatsapp' }}"
+        } }
+      },
+      "id": "a1000000-0000-4000-8000-000000000012",
+      "name": "Log evento",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [ 760, 360 ],
+      "credentials": { "postgres": { "id": "orion-pg", "name": "Orion Postgres" } }
+    },
+    {
+      "parameters": { "httpMethod": "POST", "path": "orion-optout", "options": {} },
+      "id": "a1000000-0000-4000-8000-000000000013",
+      "name": "Opt-out inbound (Webhook)",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [ -860, 680 ],
+      "webhookId": "orion-optout"
+    },
+    {
+      "parameters": {
+        "jsCode": "const palavras = ['sair','não tenho interesse','nao tenho interesse','descadastrar','remover'];\nconst dias = 60;\nreturn $input.all().map(i => {\n  const b = i.json.body || i.json;\n  const texto = (b.message || b.text || '').toLowerCase();\n  const escola_id = b.escola_id || b.id || '';\n  const match = palavras.some(p => texto.includes(p));\n  const ate = new Date(Date.now() + dias*86400000).toISOString().slice(0,10);\n  return { json: { escola_id, match, bloqueado_ate: ate, motivo: 'opt-out via mensagem' } };\n}).filter(i => i.json.match && i.json.escola_id);"
+      },
+      "id": "a1000000-0000-4000-8000-000000000014",
+      "name": "Detectar opt-out",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [ -640, 680 ]
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "INSERT INTO optout (escola_id, motivo, bloqueado_ate)\nVALUES ('{{ $json.escola_id }}', '{{ $json.motivo }}', '{{ $json.bloqueado_ate }}')\nON CONFLICT (escola_id) DO UPDATE SET bloqueado_ate = EXCLUDED.bloqueado_ate;\nUPDATE escolas SET status='opt-out', data_atualizacao=CURRENT_DATE WHERE id='{{ $json.escola_id }}';"
+      },
+      "id": "a1000000-0000-4000-8000-000000000015",
+      "name": "Marcar opt-out 60d",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [ -420, 680 ],
+      "credentials": { "postgres": { "id": "orion-pg", "name": "Orion Postgres" } }
+    }
+  ],
+  "connections": {
+    "Agenda seg-sex 09-18": { "main": [ [ { "node": "Buscar escolas devidas", "type": "main", "index": 0 } ] ] },
+    "Buscar escolas devidas": { "main": [ [ { "node": "Decidir toque", "type": "main", "index": 0 } ] ] },
+    "Decidir toque": { "main": [ [ { "node": "Canal?", "type": "main", "index": 0 } ] ] },
+    "Canal?": { "main": [
+      [ { "node": "Montar e-mail", "type": "main", "index": 0 } ],
+      [ { "node": "WhatsApp permitido?", "type": "main", "index": 0 } ]
+    ] },
+    "Montar e-mail": { "main": [ [ { "node": "Pode enviar auto?", "type": "main", "index": 0 } ] ] },
+    "Pode enviar auto?": { "main": [
+      [ { "node": "Enviar e-mail (SMTP)", "type": "main", "index": 0 } ],
+      [ { "node": "Fila revisar (humano aprova)", "type": "main", "index": 0 } ]
+    ] },
+    "Enviar e-mail (SMTP)": { "main": [ [ { "node": "Log evento", "type": "main", "index": 0 } ] ] },
+    "WhatsApp permitido?": { "main": [
+      [ { "node": "Evolution API enviar", "type": "main", "index": 0 } ],
+      [ { "node": "Pausar (sem toque)", "type": "main", "index": 0 } ]
+    ] },
+    "Evolution API enviar": { "main": [ [ { "node": "Log evento", "type": "main", "index": 0 } ] ] },
+    "Opt-out inbound (Webhook)": { "main": [ [ { "node": "Detectar opt-out", "type": "main", "index": 0 } ] ] },
+    "Detectar opt-out": { "main": [ [ { "node": "Marcar opt-out 60d", "type": "main", "index": 0 } ] ] }
+  }
+}
