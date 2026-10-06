@@ -15,6 +15,9 @@ secrets/
 data/private/
 data/*_pessoal.csv
 data/export_notion_*.csv
+# Relatório de inteligência B2B: contém nomes de decisores (dado pessoal) — manter local.
+Prospecção Escolar SP e SC.md
+Prospec*Escolar*.md
 
 # OS / editor
 .DS_Store
