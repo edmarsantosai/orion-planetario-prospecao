@@ -1,11 +1,12 @@
 {
+  "id": "orionmulticanal1",
   "name": "Orion — Prospecção Multicanal (seg-sex)",
   "active": false,
   "settings": { "timezone": "America/Sao_Paulo", "saveExecutionProgress": true },
   "pinData": {},
   "nodes": [
     {
-      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "0 9-18 * * 1-5" } ] } },
+      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "0 9 * * 1-5" } ] } },
       "id": "a1000000-0000-4000-8000-000000000001",
       "name": "Agenda seg-sex 09-18",
       "type": "n8n-nodes-base.scheduleTrigger",
@@ -15,7 +16,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT e.* FROM escolas e\nLEFT JOIN optout o ON o.escola_id = e.id\nWHERE e.status NOT IN ('fechado','descartado','opt-out')\n  AND (o.bloqueado_ate IS NULL OR o.bloqueado_ate < CURRENT_DATE)\n  AND e.data_d0 IS NOT NULL\n  AND e.email_institucional IS NOT NULL;",
+        "query": "SELECT e.* FROM escolas e\nLEFT JOIN optout o ON o.escola_id = e.id\nWHERE e.status NOT IN ('fechado','descartado','opt-out')\n  AND (o.bloqueado_ate IS NULL OR o.bloqueado_ate < CURRENT_DATE)\n  AND e.data_d0 IS NOT NULL\n  AND e.email_institucional IS NOT NULL\n  AND NOT EXISTS (\n    SELECT 1 FROM eventos ev\n    WHERE ev.escola_id = e.id AND ev.acao = 'disparo' AND ev.ts::date = CURRENT_DATE\n  );",
         "additionalFields": {}
       },
       "id": "a1000000-0000-4000-8000-000000000002",
@@ -123,7 +124,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "https://api.edmarsantos.com.br/message/sendText/INSTANCIA_EVOLUTION",
+        "url": "https://api.edmarsantos.com.br/message/sendText/orion",
         "sendHeaders": true,
         "headerParameters": { "parameters": [ { "name": "apikey", "value": "DEFINIR_APIKEY_EVOLUTION" } ] },
         "sendBody": true,
