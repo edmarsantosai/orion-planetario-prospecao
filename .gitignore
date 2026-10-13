@@ -22,6 +22,11 @@ Prospec*Escolar*.md
 escolas parana.txt
 *escolas*parana*.txt
 *parana*.txt
+# Arquivos nominais LGPD (nomes de decisores / contatos pessoais) — só Notion, nunca Git.
+data/_LGPD_*
+# Scripts geradores temporários
+data/_tmp_*.js
+_tmp_*.js
 
 # OS / editor
 .DS_Store
