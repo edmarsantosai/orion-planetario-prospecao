@@ -18,6 +18,10 @@ data/export_notion_*.csv
 # Relatório de inteligência B2B: contém nomes de decisores (dado pessoal) — manter local.
 Prospecção Escolar SP e SC.md
 Prospec*Escolar*.md
+# Relatório de inteligência do Paraná: idem (nomes de diretores/coordenadores) — não versionar.
+escolas parana.txt
+*escolas*parana*.txt
+*parana*.txt
 
 # OS / editor
 .DS_Store
