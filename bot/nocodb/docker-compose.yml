@@ -1,0 +1,43 @@
+# NocoDB — front-end (CRM) da operação Orion, por cima da MESMA base Postgres `orion`
+# que o n8n já lê. Edita aqui → o disparo enxerga na hora (fonte única da verdade).
+#
+# Stack compartilhada do Edmar: NÃO sobe Postgres próprio — reusa o `postgres` existente
+# (rede `internal`) como fonte de dados externa, e entra atrás do Traefik (rede `proxy`).
+#
+# Subir:  docker compose -f bot/nocodb/docker-compose.yml up -d
+# Logs:   docker logs -f nocodb
+# Parar:  docker compose -f bot/nocodb/docker-compose.yml down   (NÃO apaga o volume de metadados)
+
+services:
+  nocodb:
+    image: nocodb/nocodb:latest
+    container_name: nocodb
+    restart: unless-stopped
+    environment:
+      # Metadados do próprio NocoDB ficam ISOLADOS neste volume SQLite (não poluem o banco orion).
+      NC_PUBLIC_URL: "https://crm.edmarsantos.com.br"
+      NC_DISABLE_TELE: "true"
+      # Admin inicial (troque a senha no 1o login). Deixe em .env, NÃO versione a senha real.
+      NC_ADMIN_EMAIL: "${NC_ADMIN_EMAIL}"
+      NC_ADMIN_PASSWORD: "${NC_ADMIN_PASSWORD}"
+    volumes:
+      - nocodb_data:/usr/app/data
+    networks:
+      - proxy       # exposição via Traefik
+      - internal    # para alcançar o container `postgres` (fonte de dados orion)
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=proxy"
+      - "traefik.http.routers.nocodb.rule=Host(`crm.edmarsantos.com.br`)"
+      - "traefik.http.routers.nocodb.entrypoints=websecure"
+      - "traefik.http.routers.nocodb.tls.certresolver=cloudflare"
+      - "traefik.http.services.nocodb.loadbalancer.server.port=8080"
+
+volumes:
+  nocodb_data:
+
+networks:
+  proxy:
+    external: true
+  internal:
+    external: true

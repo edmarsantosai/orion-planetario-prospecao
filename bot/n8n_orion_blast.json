@@ -1,0 +1,163 @@
+{
+  "id": "orionblast1316out",
+  "name": "Orion — Blast 20x2 (13-16 out)",
+  "active": false,
+  "settings": { "timezone": "America/Sao_Paulo", "saveExecutionProgress": true },
+  "pinData": {},
+  "nodes": [
+    {
+      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "0 9 * * 2-5" } ] } },
+      "id": "b1000000-0000-4000-8000-000000000001",
+      "name": "Cron 09h (ter-sex)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [ -920, 220 ]
+    },
+    {
+      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "0 14 * * 2-5" } ] } },
+      "id": "b1000000-0000-4000-8000-000000000002",
+      "name": "Cron 14h (ter-sex)",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [ -920, 400 ]
+    },
+    {
+      "parameters": {
+        "jsCode": "const tz = 'America/Sao_Paulo';\nconst agora = new Date(new Date().toLocaleString('en-US', { timeZone: tz }));\nconst iso = agora.getFullYear() + '-' + String(agora.getMonth()+1).padStart(2,'0') + '-' + String(agora.getDate()).padStart(2,'0');\n// Janela autorizada: inicio da rampa 03/11/2026 ate 19/12/2026. Fora disso o workflow nao envia nada.\nif (iso >= '2026-11-03' && iso <= '2026-12-19') return [{ json: { janela: true, hoje: iso } }];\nreturn [];"
+      },
+      "id": "b1000000-0000-4000-8000-000000000003",
+      "name": "Janela 13-16 out?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [ -700, 300 ],
+      "notes": "Gate de data: so segue se hoje (America/Sao_Paulo) estiver entre 2026-10-13 e 2026-10-16. Retorna [] fora da janela => nada e enviado."
+    },
+    {
+      "parameters": {
+        "operation": "executeQuery",
+        "query": "SELECT e.* FROM escolas e\nLEFT JOIN optout o ON o.escola_id = e.id\nWHERE e.email_institucional IS NOT NULL\n  AND e.email_institucional LIKE '%@%.%'\n  AND e.aprovado = true\n  AND e.status NOT IN ('fechado','descartado','opt-out')\n  AND (o.bloqueado_ate IS NULL OR o.bloqueado_ate < CURRENT_DATE)\n  AND NOT EXISTS (\n    SELECT 1 FROM eventos ev\n    WHERE ev.escola_id = e.id AND ev.canal = 'email' AND ev.acao = 'disparo'\n  )\nORDER BY CASE e.prioridade WHEN 'P1' THEN 1 WHEN 'P2' THEN 2 WHEN 'P3' THEN 3 ELSE 4 END,\n         CASE e.uf WHEN 'SC' THEN 1 WHEN 'SP' THEN 2 ELSE 3 END,\n         e.id\nLIMIT 20;",
+        "additionalFields": {}
+      },
+      "id": "b1000000-0000-4000-8000-000000000004",
+      "name": "Buscar 20 escolas",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [ -480, 300 ],
+      "credentials": { "postgres": { "id": "orion-pg", "name": "Orion Postgres" } },
+      "notes": "Pega ate 20 escolas com e-mail valido, nao bloqueadas e que AINDA NAO receberam e-mail (dedupe por eventos). Ordem: P1>P2>P3, SC antes de SP. Como cada envio loga em eventos, o lote da tarde pega os 20 seguintes."
+    },
+    {
+      "parameters": {
+        "jsCode": "return $input.all().map(i => {\n  const e = i.json;\n  const coord = e.nome_coordenacao || 'equipe pedagógica';\n  const escola = e.nome_escola || 'sua escola';\n  const cidade = e.cidade || 'sua cidade';\n  const assunto = `${escola}: um planetário 360° na escola — sem custo para vocês`;\n  const corpo_html = `<!DOCTYPE html><html lang='pt-BR'><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width, initial-scale=1.0'><meta name='x-apple-disable-message-reformatting'><title>Orion Planetários</title><style>body{margin:0;padding:0;width:100%!important;background:#eef0f7}a{text-decoration:none}img{border:0;outline:none;-ms-interpolation-mode:bicubic}@media only screen and (max-width:620px){.container{width:100%!important}.px{padding-left:22px!important;padding-right:22px!important}.h1{font-size:26px!important}.btn-a{display:block!important}}</style></head><body style='margin:0;padding:0;background:#eef0f7;'><div style='display:none;max-height:0;overflow:hidden;opacity:0;font-size:1px;line-height:1px;color:#eef0f7;'>Planetário imersivo 360° dentro da sua escola — sem custo e com 10% de repasse. Aula alinhada à BNCC.</div><center style='width:100%;background:#eef0f7;'><table role='presentation' cellpadding='0' cellspacing='0' border='0' width='100%' style='background:#eef0f7;'><tr><td align='center' style='padding:24px 12px;'><table role='presentation' class='container' cellpadding='0' cellspacing='0' border='0' width='600' style='width:600px;max-width:600px;'><tr><td style='background:#05081A;background:linear-gradient(135deg,#0a0f2e 0%,#05081A 55%,#120a2e 100%);border-radius:16px 16px 0 0;padding:26px 30px;text-align:center;'><img src='https://orionplanetarios.com.br/wp-content/uploads/2022/08/logo-orion-planetarios.png' width='150' alt='Orion Planetários' style='display:inline-block;max-width:150px;height:auto;'><div style='font-family:Arial,Helvetica,sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;color:#F5C14E;margin-top:12px;font-weight:bold;'>Planetário Itinerante 360°</div></td></tr><tr><td style='background:#05081A;'><img src='https://orionplanetarios.com.br/wp-content/uploads/2022/08/orionplanetarios-002-768x576.jpg' width='600' alt='Planetário Orion montado dentro de uma escola' style='display:block;width:100%;max-width:600px;height:auto;'></td></tr><tr><td class='card px' style='background:#ffffff;padding:34px 40px 10px 40px;font-family:Arial,Helvetica,sans-serif;'><p style='margin:0 0 18px 0;font-size:16px;line-height:1.6;color:#2b2f45;'>Olá, <strong>${coord}</strong>, tudo bem?</p><h1 class='h1' style='margin:0 0 16px 0;font-family:Georgia,serif;font-size:30px;line-height:1.2;color:#0a0f2e;font-weight:bold;'>Um planetário 360° dentro da <span style='color:#B8901E;'>${escola}</span> — sem custo para a escola.</h1><p style='margin:0 0 22px 0;font-size:15px;line-height:1.65;color:#444a63;'>Sou o <strong>Edmar</strong>, representante da <strong>Orion Planetários</strong>. Levamos um planetário imersivo para dentro da instituição — uma aula de astronomia alinhada à <strong>BNCC</strong>, do Infantil ao Médio. Montamos no pátio, operamos tudo e cuidamos de toda a divulgação.</p><table role='presentation' cellpadding='0' cellspacing='0' border='0' width='100%' style='margin:0 0 24px 0;'><tr><td width='30' valign='top' style='font-size:18px;color:#1aa06d;line-height:1.5;'>✓</td><td style='font-size:15px;line-height:1.5;color:#2b2f45;padding-bottom:12px;'><strong>A escola não paga nada</strong> e ainda <strong>recebe 10%</strong> do arrecadado (o aluno paga o ingresso, ref. R$ 30).</td></tr><tr><td width='30' valign='top' style='font-size:18px;color:#1aa06d;line-height:1.5;'>✓</td><td style='font-size:15px;line-height:1.5;color:#2b2f45;padding-bottom:12px;'>Experiência <strong>imersiva 360°</strong> por faixa etária — vira matéria de sala, não só passeio.</td></tr><tr><td width='30' valign='top' style='font-size:18px;color:#1aa06d;line-height:1.5;'>✓</td><td style='font-size:15px;line-height:1.5;color:#2b2f45;'>Os alunos participantes concorrem a um <strong>kit Vivitar 2 em 1 (telescópio + microscópio)</strong> — a descoberta continua em casa. 🔭🔬</td></tr></table><table role='presentation' cellpadding='0' cellspacing='0' border='0' width='100%'><tr><td align='center' style='padding:4px 0 18px 0;'><a class='btn-a' href='https://wa.me/5547992009480?text=Oi%20Edmar!%20Quero%20saber%20sobre%20o%20Planet%C3%A1rio%20na%20escola.' style='background:#F5C14E;background:linear-gradient(180deg,#F5C14E,#E7A82E);color:#1b1403;font-family:Arial,Helvetica,sans-serif;font-size:16px;font-weight:bold;line-height:50px;text-align:center;display:inline-block;width:340px;max-width:100%;border-radius:999px;'>Falar com o Edmar no WhatsApp →</a></td></tr><tr><td align='center' style='padding-bottom:22px;'><a href='https://www.youtube.com/watch?v=Lr5xn2BRIG0' style='color:#3b4a8f;font-family:Arial,Helvetica,sans-serif;font-size:14px;font-weight:bold;'>▶ Assistir ao vídeo de 1 minuto</a></td></tr></table><p style='margin:0 0 6px 0;font-size:14px;line-height:1.6;color:#444a63;'>Já impactamos <strong>+200 mil alunos</strong> em escolas públicas e particulares de SC e SP. Posso te mostrar como fica na <strong>${cidade}</strong> numa conversa de <strong>15 minutos</strong>?</p></td></tr><tr><td class='card px' style='background:#ffffff;padding:16px 40px 30px 40px;font-family:Arial,Helvetica,sans-serif;'><table role='presentation' cellpadding='0' cellspacing='0' border='0' width='100%' style='border-top:1px solid #e6e8f2;'><tr><td style='padding-top:18px;'><p style='margin:0;font-size:15px;color:#0a0f2e;'><strong>Edmar Santos</strong> — Representante Oficial Orion (SC &amp; SP)</p><p style='margin:6px 0 0 0;font-size:14px;color:#444a63;line-height:1.7;'>WhatsApp (47) 99200-9480 &nbsp;·&nbsp; edmar.orionplanetarios@gmail.com<br>@orionplanetarios &nbsp;·&nbsp; orionplanetarios.com.br</p></td></tr></table></td></tr><tr><td style='padding:20px 40px;font-family:Arial,Helvetica,sans-serif;text-align:center;'><p style='margin:0;font-size:12px;line-height:1.6;color:#8a90ab;'>Você recebeu este e-mail como contato institucional da escola. Se não quiser mais receber, <strong>responda com a palavra sair</strong> e encerramos o contato por aqui.</p><p style='margin:10px 0 0 0;font-size:12px;color:#aab0c8;'>Orion Planetários · orionplanetarios.com.br</p></td></tr></table></td></tr></table></center></body></html>`;\n  return { json: { ...e, assunto, corpo_html } };\n});"
+      },
+      "id": "b1000000-0000-4000-8000-000000000005",
+      "name": "Montar e-mail (HTML)",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [ -260, 300 ]
+    },
+    {
+      "parameters": {
+        "batchSize": 5,
+        "options": {}
+      },
+      "id": "b1000000-0000-4000-8000-000000000006",
+      "name": "Lote (throttle 5)",
+      "type": "n8n-nodes-base.splitInBatches",
+      "typeVersion": 3,
+      "position": [ -40, 300 ],
+      "notes": "Envia em sub-lotes de 5 com espera entre eles, para preservar a reputacao do remetente."
+    },
+    {
+      "parameters": {
+        "fromEmail": "comercial@edmarsantos.com.br",
+        "toEmail": "={{ $json.email_institucional }}",
+        "subject": "={{ $json.assunto }}",
+        "emailFormat": "html",
+        "html": "={{ $json.corpo_html }}",
+        "options": {
+          "replyTo": "edmarsantos.unasp@gmail.com, edmar.orionplanetarios@gmail.com",
+          "ccEmail": "",
+          "bccEmail": "edmarsantos.unasp@gmail.com, edmar.orionplanetarios@gmail.com",
+          "appendAttribution": false
+        }
+      },
+      "id": "b1000000-0000-4000-8000-000000000007",
+      "name": "Enviar e-mail (SMTP)",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [ 200, 220 ],
+      "credentials": { "smtp": { "id": "orion-smtp", "name": "Orion SMTP HostGator" } },
+      "notes": "From = comercial@edmarsantos.com.br (SPF/DKIM). Bcc + Reply-To = os 2 Gmails do Edmar: as escolas NAO veem os Gmails, e as respostas caem direto neles. Sem anexo (corpo HTML leve)."
+    },
+    {
+      "parameters": {
+        "operation": "insert",
+        "schema": { "__rl": true, "mode": "list", "value": "public" },
+        "table": { "__rl": true, "mode": "list", "value": "eventos" },
+        "columns": { "mappingMode": "defineBelow", "value": {
+          "escola_id": "={{ $json.id }}", "canal": "email",
+          "etapa": "D0", "acao": "disparo", "detalhe": "={{ $json.assunto }}"
+        } }
+      },
+      "id": "b1000000-0000-4000-8000-000000000008",
+      "name": "Log evento",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [ 440, 220 ],
+      "credentials": { "postgres": { "id": "orion-pg", "name": "Orion Postgres" } }
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "schema": { "__rl": true, "mode": "list", "value": "public" },
+        "table": { "__rl": true, "mode": "list", "value": "escolas" },
+        "columns": { "mappingMode": "defineBelow", "matchingColumns": [ "id" ], "value": {
+          "id": "={{ $json.id }}",
+          "status": "contatado",
+          "data_d0": "={{ $now.format('yyyy-MM-dd') }}",
+          "data_atualizacao": "={{ $now.format('yyyy-MM-dd') }}"
+        } }
+      },
+      "id": "b1000000-0000-4000-8000-000000000009",
+      "name": "Atualizar status",
+      "type": "n8n-nodes-base.postgres",
+      "typeVersion": 2.5,
+      "position": [ 680, 220 ],
+      "credentials": { "postgres": { "id": "orion-pg", "name": "Orion Postgres" } },
+      "notes": "Marca status=contatado e grava data_d0=hoje (permite que a cadencia de 14 dias faca os follow-ups D7/D14 depois, se ativada)."
+    },
+    {
+      "parameters": { "amount": 15, "unit": "seconds" },
+      "id": "b1000000-0000-4000-8000-000000000010",
+      "name": "Esperar 15s",
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [ 900, 220 ],
+      "webhookId": "orion-blast-wait"
+    },
+    {
+      "parameters": {},
+      "id": "b1000000-0000-4000-8000-000000000011",
+      "name": "Fim",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [ 200, 420 ]
+    }
+  ],
+  "connections": {
+    "Cron 09h (ter-sex)": { "main": [ [ { "node": "Janela 13-16 out?", "type": "main", "index": 0 } ] ] },
+    "Cron 14h (ter-sex)": { "main": [ [ { "node": "Janela 13-16 out?", "type": "main", "index": 0 } ] ] },
+    "Janela 13-16 out?": { "main": [ [ { "node": "Buscar 20 escolas", "type": "main", "index": 0 } ] ] },
+    "Buscar 20 escolas": { "main": [ [ { "node": "Montar e-mail (HTML)", "type": "main", "index": 0 } ] ] },
+    "Montar e-mail (HTML)": { "main": [ [ { "node": "Lote (throttle 5)", "type": "main", "index": 0 } ] ] },
+    "Lote (throttle 5)": { "main": [
+      [ { "node": "Fim", "type": "main", "index": 0 } ],
+      [ { "node": "Enviar e-mail (SMTP)", "type": "main", "index": 0 } ]
+    ] },
+    "Enviar e-mail (SMTP)": { "main": [ [ { "node": "Log evento", "type": "main", "index": 0 } ] ] },
+    "Log evento": { "main": [ [ { "node": "Atualizar status", "type": "main", "index": 0 } ] ] },
+    "Atualizar status": { "main": [ [ { "node": "Esperar 15s", "type": "main", "index": 0 } ] ] },
+    "Esperar 15s": { "main": [ [ { "node": "Lote (throttle 5)", "type": "main", "index": 0 } ] ] }
+  }
+}
