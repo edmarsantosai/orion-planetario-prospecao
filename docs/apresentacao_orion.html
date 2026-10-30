@@ -45,7 +45,7 @@
   .brand{height:36px;width:auto;display:block;filter:drop-shadow(0 2px 10px rgba(0,0,0,.5))}
   .brand-sm{height:22px;width:auto;display:block;opacity:.95;filter:drop-shadow(0 2px 8px rgba(0,0,0,.6))}
   .tag{font-family:var(--disp);font-weight:600;font-size:11px;letter-spacing:.04em;color:#1b1403;
-       background:linear-gradient(180deg,var(--gold),var(--gold-2));padding:8px 15px;border-radius:999px;box-shadow:var(--glow)}
+       background:linear-gradient(180deg,var(--gold),var(--gold-2));padding:8px 15px;border-radius:10px;box-shadow:var(--glow)}
   .tag.ghost{background:rgba(255,255,255,.08);color:var(--gold);border:1px solid rgba(245,193,78,.55);box-shadow:none;backdrop-filter:blur(2px)}
 
   .kicker{font-family:var(--disp);letter-spacing:.34em;text-transform:uppercase;font-size:11px;color:var(--gold);font-weight:600;
@@ -70,7 +70,7 @@
 
   /* buttons (CTA, não é caixa decorativa) */
   .btn{display:inline-flex;align-items:center;gap:9px;background:linear-gradient(180deg,var(--gold),var(--gold-2));color:#1b1403;
-       font-family:var(--disp);font-weight:700;font-size:15px;padding:14px 22px;border-radius:999px;box-shadow:0 14px 34px rgba(245,193,78,.4)}
+       font-family:var(--disp);font-weight:700;font-size:15px;padding:14px 22px;border-radius:10px;box-shadow:0 14px 34px rgba(245,193,78,.4)}
   .btn.out{background:rgba(255,255,255,.07);color:#fff;border:1.5px solid var(--line);box-shadow:none;backdrop-filter:blur(2px)}
   .btns{display:flex;gap:13px;align-items:center;flex-wrap:wrap}
 
@@ -231,14 +231,22 @@
     <div class="mega" style="margin:34px 0 10px">
       <div class="m-item"><div class="m wht">R$0</div><div class="lx">de custo para a instituição. A Orion opera, vende via Sympla e faz toda a divulgação.</div></div>
       <div class="m-item"><div class="m gold">10%</div><div class="lx">do total arrecadado fica com a escola — o aluno paga o ingresso (ref. R$ 30).</div></div>
-      <div class="m-item"><div class="m" style="color:var(--violet)">🔭 1</div><div class="lx">telescópio semiprofissional sorteado entre os alunos participantes.</div></div>
+      <div class="m-item"><div class="m" style="color:var(--violet)">🔭 1</div><div class="lx">kit Vivitar 2&#8209;em&#8209;1 (telescópio refletor + microscópio 600×) sorteado entre os alunos participantes — a jornada de descobertas continua em casa.</div></div>
     </div>
-    <div class="push" style="margin-bottom:auto;max-width:150mm">
-      <h3 class="wht" style="margin-bottom:4px">Custo por aluno — sem o peso de um passeio externo</h3>
-      <div class="scale">
-        <div class="row"><span>Passeio externo (ônibus + ingresso + seguro)</span><b class="hi-red">Alto</b></div>
-        <div class="row"><span>Atração paga na cidade</span><b class="hi-amber">Médio</b></div>
-        <div class="row"><span>Planetário Orion na escola</span><b class="hi-green">R$0 p/ escola</b></div>
+    <div class="push" style="margin-bottom:auto">
+      <div style="display:grid;grid-template-columns:1fr 54mm;gap:34px;align-items:end">
+        <div>
+          <h3 class="wht" style="margin-bottom:11px">Custo por aluno — sem o peso de um passeio externo</h3>
+          <div class="scale">
+            <div class="row"><span>Passeio externo (ônibus + ingresso + seguro)</span><b class="hi-red">Alto</b></div>
+            <div class="row"><span>Atração paga na cidade</span><b class="hi-amber">Médio</b></div>
+            <div class="row"><span>Planetário Orion na escola</span><b class="hi-green">R$0 p/ escola</b></div>
+          </div>
+        </div>
+        <figure style="margin:0;text-align:center">
+          <img src="assets/telescopio-sorteio.jpg" alt="Kit Vivitar 2-em-1: telescopio refletor e microscopio sorteado no evento" style="width:100%;height:auto;border-radius:12px;border:1.5px solid rgba(245,193,78,.7);box-shadow:0 16px 40px rgba(0,0,0,.55)">
+          <figcaption style="font-family:var(--disp);font-weight:700;font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--gold);margin-top:10px">Prêmio sorteado<span style="display:block;font-weight:400;font-size:10px;letter-spacing:.01em;text-transform:none;color:var(--soft);margin-top:3px">Kit telescópio + microscópio Vivitar</span></figcaption>
+        </figure>
       </div>
     </div>
     <div class="foot"><img class="brand-sm" src="assets/logo-orion.png" alt="Orion Planetários"><span>Modelo principal (ingresso) · diária fechada sob consulta &nbsp;·&nbsp; 04</span></div>
