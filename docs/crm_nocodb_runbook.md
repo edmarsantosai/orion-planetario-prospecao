@@ -33,6 +33,8 @@ Abra `https://crm.edmarsantos.com.br` → entre com o `NC_ADMIN_*` do `.env` →
 
 ## Parte B — Conectar a base `orion` (uma vez)
 
+> ⚠️ **Versão do NocoDB importa:** use **0.264.9** (já fixado no compose). As versões **2026.x** têm um guard anti-SSRF que recusa conectar a host privado (`postgres`) com `"Connection to internal hosts is not allowed"` — e **não há env de override**. Conectado e validado via API em 0.264.9 (2026-11-02).
+
 1. **New Base → Connect to external database → PostgreSQL.**
 2. Dados de conexão:
    - Host: `postgres`  ·  Port: `5432`  ·  Database: `orion`

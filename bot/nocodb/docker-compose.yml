@@ -10,7 +10,10 @@
 
 services:
   nocodb:
-    image: nocodb/nocodb:latest
+    # Fixado em 0.264.9 de propósito: versões 2026.x têm um guard anti-SSRF que
+    # RECUSA conectar a host privado ("Connection to internal hosts is not allowed"),
+    # o que bloqueia usar o `postgres` interno como fonte. 0.264.9 conecta normal.
+    image: nocodb/nocodb:0.264.9
     container_name: nocodb
     restart: unless-stopped
     environment:
