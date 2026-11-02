@@ -97,6 +97,25 @@ O workflow `orionmulticanal1` já lê o Postgres, mas tem **2 pendências** anot
 
 ---
 
+## 📊 Rastreio & taxas (comportamento do destinatário)
+
+Cada ação é registrada em `eventos` (`escola_id, canal, etapa, acao, detalhe, ts`):
+- `acao='disparo'` — e-mail **enviado** (1 por escola; é o registro de todos os envios).
+- `acao='abertura'` — pixel carregado (⚠️ Gmail faz proxy/cache de imagem → **aproximado**, pode contar no momento da entrega).
+- `acao='clique'` — clicou num link (`detalhe` = `whatsapp` | `video`) — **sinal forte** de interesse real.
+
+Taxas (rodar no psql ou na UI SQL do NocoDB):
+```sql
+SELECT
+  count(*)                         FILTER (WHERE acao='disparo')  AS enviados,
+  count(DISTINCT escola_id)        FILTER (WHERE acao='abertura') AS abriram,
+  count(DISTINCT escola_id)        FILTER (WHERE acao='clique')   AS clicaram
+FROM eventos WHERE canal='email';
+```
+No **NocoDB**: a tabela `eventos` aparece como grid — filtre por `acao` pra ver quem abriu/clicou. O **Funil** do CRM = contagem por `status` na tabela `escolas`. Bounces = ler a caixa `comercial@` por IMAP (ainda manual).
+
+Infra: webhooks `https://n8n.edmarsantos.com.br/webhook/orion/open` e `/click` (workflow `oriontracking1`). O e-mail embute o pixel e passa os 2 CTAs por esse redirect.
+
 ## Parte E — Desligar o Make (migração concluída)
 1. No painel do Make: **pausar/desligar** o cenário de disparo.
 2. **Revogar o token da API do Make** (vazou no chat) — Make → Profile → API tokens → revoke.
