@@ -6,7 +6,7 @@
   "pinData": {},
   "nodes": [
     {
-      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "0 9 * * 2-5" } ] } },
+      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "0 9 * * 1-5" } ] } },
       "id": "b1000000-0000-4000-8000-000000000001",
       "name": "Cron 09h (ter-sex)",
       "type": "n8n-nodes-base.scheduleTrigger",
@@ -14,7 +14,7 @@
       "position": [ -920, 220 ]
     },
     {
-      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "0 14 * * 2-5" } ] } },
+      "parameters": { "rule": { "interval": [ { "field": "cronExpression", "expression": "0 14 * * 1-5" } ] } },
       "id": "b1000000-0000-4000-8000-000000000002",
       "name": "Cron 14h (ter-sex)",
       "type": "n8n-nodes-base.scheduleTrigger",
@@ -23,7 +23,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const tz = 'America/Sao_Paulo';\nconst agora = new Date(new Date().toLocaleString('en-US', { timeZone: tz }));\nconst iso = agora.getFullYear() + '-' + String(agora.getMonth()+1).padStart(2,'0') + '-' + String(agora.getDate()).padStart(2,'0');\n// Janela autorizada: inicio da rampa 03/11/2026 ate 19/12/2026. Fora disso o workflow nao envia nada.\nif (iso >= '2026-11-03' && iso <= '2026-12-19') return [{ json: { janela: true, hoje: iso } }];\nreturn [];"
+        "jsCode": "const tz = 'America/Sao_Paulo';\nconst agora = new Date(new Date().toLocaleString('en-US', { timeZone: tz }));\nconst iso = agora.getFullYear() + '-' + String(agora.getMonth()+1).padStart(2,'0') + '-' + String(agora.getDate()).padStart(2,'0');\n// Janela autorizada: a partir de 03/11/2026 ate 31/12/2027 (temporada inteira). Fora disso nao envia.\nif (iso >= '2026-11-03' && iso <= '2027-12-31') return [{ json: { janela: true, hoje: iso } }];\nreturn [];"
       },
       "id": "b1000000-0000-4000-8000-000000000003",
       "name": "Janela 13-16 out?",
@@ -35,7 +35,7 @@
     {
       "parameters": {
         "operation": "executeQuery",
-        "query": "SELECT e.* FROM escolas e\nLEFT JOIN optout o ON o.escola_id = e.id\nWHERE e.email_institucional IS NOT NULL\n  AND e.email_institucional LIKE '%@%.%'\n  AND e.aprovado = true\n  AND e.status NOT IN ('fechado','descartado','opt-out')\n  AND (o.bloqueado_ate IS NULL OR o.bloqueado_ate < CURRENT_DATE)\n  AND NOT EXISTS (\n    SELECT 1 FROM eventos ev\n    WHERE ev.escola_id = e.id AND ev.canal = 'email' AND ev.acao = 'disparo'\n  )\nORDER BY CASE e.prioridade WHEN 'P1' THEN 1 WHEN 'P2' THEN 2 WHEN 'P3' THEN 3 ELSE 4 END,\n         CASE e.uf WHEN 'SC' THEN 1 WHEN 'SP' THEN 2 ELSE 3 END,\n         e.id\nLIMIT 20;",
+        "query": "SELECT e.* FROM escolas e\nLEFT JOIN optout o ON o.escola_id = e.id\nWHERE e.email_institucional IS NOT NULL\n  AND e.email_institucional LIKE '%@%.%'\n  AND e.aprovado = true\n  AND e.status NOT IN ('fechado','descartado','opt-out')\n  AND (o.bloqueado_ate IS NULL OR o.bloqueado_ate < CURRENT_DATE)\n  AND NOT EXISTS (\n    SELECT 1 FROM eventos ev\n    WHERE ev.escola_id = e.id AND ev.canal = 'email' AND ev.acao = 'disparo'\n  )\nORDER BY CASE e.prioridade WHEN 'P1' THEN 1 WHEN 'P2' THEN 2 WHEN 'P3' THEN 3 ELSE 4 END,\n         CASE e.uf WHEN 'SC' THEN 1 WHEN 'SP' THEN 2 ELSE 3 END,\n         e.id\nLIMIT (SELECT GREATEST((CASE WHEN CURRENT_DATE <= DATE '2026-11-03' THEN 5 WHEN CURRENT_DATE = DATE '2026-11-04' THEN 10 WHEN CURRENT_DATE = DATE '2026-11-05' THEN 15 ELSE 20 END) - (SELECT COUNT(*) FROM eventos WHERE canal = 'email' AND acao = 'disparo' AND ts::date = CURRENT_DATE), 0));",
         "additionalFields": {}
       },
       "id": "b1000000-0000-4000-8000-000000000004",
